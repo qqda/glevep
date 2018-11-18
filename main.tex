@@ -1,0 +1,57 @@
+%!TEX root = ./main.tex
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage[utf8]{inputenc}
+\usepackage{array}
+\usepackage{gensymb}
+\usepackage{mathtools}
+\usepackage{units}
+\usepackage{esvect}
+\usepackage{multirow}
+\usepackage{tikz}
+\usepackage{subfig}
+\usepackage{url}
+
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\begin{document}
+
+\title{globaleventprognosis}
+
+\author{\IEEEauthorblockN{Phillip Ginter}
+\IEEEauthorblockA{\textit{Informatik (IN)} \\
+\textit{Hochschule Furtwangen}\\
+78120 Furtwangen, Deutschland \\
+phillip.ginter@hs-furtwangen.de}
+\and
+\IEEEauthorblockN{Daniel Schönle}
+\IEEEauthorblockA{\textit{Informatik (IN)} \\
+\textit{Hochschule Furtwangen}\\
+78120 Furtwangen, Deutschland \\
+daniel.schoenle@hs-furtwangen.de}
+}
+
+\maketitle
+
+% INPUT Content sections
+\input{chapters/0-abstract}
+\input{chapters/1-intro}
+\input{chapters/2-nn}
+\input{chapters/3-anwendung}
+\input{chapters/4-diskussion}
+
+% Quellenverzeichnis
+\bibliographystyle{IEEEtran}
+\bibliography{bibtex}
+
+\end{document}
