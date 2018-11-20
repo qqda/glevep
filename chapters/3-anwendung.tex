@@ -1,3 +1,125 @@
 %!TEX root = ./../main.tex
 \section{Anwendung}
-aa
+Request von https://codepen.io/ottomata/pen/VKNyEw/ und https://wikitech.wikimedia.org/wiki/EventStreams
+\begin{lstlisting}
+function init() {
+  var eventsource = new EventSource("https://stream.wikimedia.org/v2/stream/recentchange");
+
+
+  var freq;
+  printEvent({
+    type: 'info',
+    message: 'Connecting...'
+  });
+  eventsource.onopen = function() {
+    printEvent({
+      type: 'info',
+      message: 'Connected! Listening for events...'
+    });
+    freq = new Frequency(1000, function (count, average) {
+      console.log("rateMinNode.textContent: " + count);
+      console.log("rateAvgNode.textContent: " + average);
+    });
+  };
+
+  eventsource.onmessage = function(msg) {
+    if (freq) { freq.add(1); }
+    printEvent({type: 'message', data: msg.data});
+  };
+
+  eventsource.onerror = function(msg) {
+    // Don't print {isTrusted: true}.  (Is this an error?)
+    if (!msg.isTrusted) {
+      printEvent({
+       type: 'error',
+       data: msg
+      });
+    }
+  };
+
+  function printEvent(event) {
+    var node;
+    if (event.type === 'message') {
+      console.log(JSON.parse(event.data));
+    } else if (event.type === 'error') {
+      if (!errorNode.parentNode) {
+        console.error(JSON.parse(event.data));
+      }
+    } else if (event.type === 'info') {
+      console.log(event.message);
+    }
+  }
+}
+
+function Frequency(interval, callback) {
+  var freq = this;
+  var rAF = window.requestAnimationFrame || setTimeout;
+
+  this.interval = interval;
+  this.callback = callback;
+  this.count = 0;
+  this.total = 0;
+  this.since = this.start = this.now();
+  function checker() {
+    freq.check();
+    rAF(checker);
+  }
+  rAF(checker);
+}
+Frequency.prototype.now = ( function () {
+  var perf = window.performance;
+  return perf.now ?
+    function () { return perf.now(); } :
+    function () { return +new Date(); };
+}() );
+Frequency.prototype.add = function (count) {
+  this.count += count;
+  this.total += count;
+  this.check();
+};
+Frequency.prototype.check = function () {
+  var count, avg, ellapsedTotal;
+  var ellapsed = this.now() - this.since;
+  if (ellapsed >= this.interval) {
+    ellapsedTotal = this.now() - this.start;
+    count = this.count;
+    // One optional digit
+    avg = (this.total / (ellapsedTotal / this.interval)).toFixed(1).replace('.0', '');
+    this.since = this.now();
+    this.count = 0;
+    this.callback(count, avg);
+  }
+};
+
+init();
+\end{lstlisting}
+
+Response (https://en.wikipedia.org/w/index.php?title=Bad_Case_of_Loving_You_(Doctor,_Doctor)&action=history)
+\begin{lstlisting}
+{
+	"bot": false,
+	"comment": "[[:Bad Case of Loving You (Doctor, Doctor)]] removed from category",
+	"id": 1106933467,
+	"meta": {
+		"domain": "en.wikipedia.org",
+		"dt": "2018-11-20T18:43:54+00:00",
+		"id": "38453ebe-ecf5-11e8-b085-1866da97fe87",
+		"request_id": "W-RV6gpAIDwAAKHT4h4AAABN",
+		"schema_uri": "mediawiki/recentchange/2",
+		"topic": "eqiad.mediawiki.recentchange",
+		"uri": "https://en.wikipedia.org/wiki/Category:Pages_using_deprecated_infobox_single_template",
+		"partition": 0,
+		"offset": 1211001004
+	},
+	"namespace": 14,
+	"parsedcomment": "<a href=\"/wiki/Bad_Case_of_Loving_You_(Doctor,_Doctor)\" title=\"Bad Case of Loving You (Doctor, Doctor)\">Bad Case of Loving You (Doctor, Doctor)</a> removed from category",
+	"server_name": "en.wikipedia.org",
+	"server_script_path": "/w",
+	"server_url": "https://en.wikipedia.org",
+	"timestamp": 1542739434,
+	"title": "Category:Pages using deprecated infobox single template",
+	"type": "categorize",
+	"user": "Zackmann08",
+	"wiki": "enwiki"
+}
+\end{lstlisting}

@@ -175,7 +175,7 @@ test one_time: $(AUX_FILE)
 
 
 
-FILTER: 
+FILTER:
 	find ./src/ -iname '*.tex' -exec ./scripts/umlaute.sh {} \;
 
 #
@@ -203,7 +203,7 @@ $(BBL_FILE): $(AUX_FILE) $(BIBTEX_SOURCE)
 #
 # Generate the PDF TODO: use stamp file and [[ -nt ]] or [[ -ot ]] (maybe in script)
 #
-$(PDF_FILE): $(AUX_FILE) $(BBL_FILE) 
+$(PDF_FILE): $(AUX_FILE) $(BBL_FILE)
 	@$(ECHO) "\t[LATEX]"
 	@$(LATEX) $(LATEX_FLAGS) $(LATEX_MAIN_SOURCE) >> $(MAKELOG)
 
@@ -237,5 +237,3 @@ nearly_clean:
 	done
 	@$(ECHO) "\t[RM]\t$(MAKELOG)"
 	@$(RM) $(MAKELOG)
-
-
