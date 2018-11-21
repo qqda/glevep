@@ -1,7 +1,7 @@
 %!TEX root = ./../main.tex
 \section{Anwendung}
-Request von https://codepen.io/ottomata/pen/VKNyEw/ und https://wikitech.wikimedia.org/wiki/EventStreams
 \begin{lstlisting}
+Request von https://codepen.io/ottomata/pen/VKNyEw/ und https://wikitech.wikimedia.org/wiki/EventStreams
 function init() {
   var eventsource = new EventSource("https://stream.wikimedia.org/v2/stream/recentchange");
 
@@ -94,8 +94,8 @@ Frequency.prototype.check = function () {
 init();
 \end{lstlisting}
 
-Response (https://en.wikipedia.org/w/index.php?title=Bad_Case_of_Loving_You_(Doctor,_Doctor)&action=history)
 \begin{lstlisting}
+Response (https://en.wikipedia.org/w/index.php?title=Bad_Case_of_Loving_You_(Doctor,_Doctor)&action=history)
 {
 	"bot": false,
 	"comment": "[[:Bad Case of Loving You (Doctor, Doctor)]] removed from category",
