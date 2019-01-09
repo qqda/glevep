@@ -43,9 +43,14 @@ TODO:
 \subsection{Implementierungsdetails zum Analysis tier: Esper}
 In unserer Esper-Anwendung des Analysis Tier, nutzen wir Esper als Complex Event Processing-Werkzeug. Zur Verarbeitung
 der Wikipedia-Events haben wir die folgenden Schritte implementiert:
+
+Genaueres zu den erzeugten Expressions im nächsten Kapitel.
+
 \begin{enumerate}
-    \item \textit{Esper Initialisierung.}
+    \item \textit{Esper Initialisierung.} Die Initialisierung von Esper besteht
     \item \textit{Expression erzeugen.}
     \item \textit{\code{UpdateListener} implementieren.}
-    \item \textit{Esper ausführen und Events auswerten.}
+    \item \textit{Kafka initialisieren.}
+    \item \textit{Kafka Consumer erzeugen und in Endlosschleife Events pollen.}
+    \item \textit{Empfangene Events auswerten.}
 \end{enumerate}
