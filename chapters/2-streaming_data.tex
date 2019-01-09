@@ -1,0 +1,27 @@
+%!TEX root = ./../main.tex
+\section{Streaming Data}
+
+Das Ziel unserer Aufgabenstellung ist die Verarbeitung von Streaming-Daten. Die Streaming Data-Architektur
+von Psaltis \cite{psaltis2017streaming} ist für diese Art von Problem konzipiert und bildet die Grundlage für
+unsere Architektur. Nach der Vorstellung der Streaming Data-Architektur von Psaltis, zeigen wir unsere eigene konkrete
+Umsetzung und vergleichen eingesetzten Technologien mit Alternativen.
+
+\subsection{Streaming Data-Architektur}
+\begin{itemize}
+    \item Wie sieht eine Streaming Data-Architektur aus bzw. aus welchen Komponenten besteht sie \cite{psaltis2017streaming}?
+    \item Ist eine Streaming Data-Architektur für unsere Aufgabenstellung sinnvoll?
+\end{itemize}
+
+\subsection{Konkrete Implementierung unserer Streaming Data-Architektur}
+Die obigen vier Stufen der Streaming Data-Architektur von Psaltis \cite{psaltis2017streaming}
+haben wir mit den folgenden konkreten Technologien gefüllt, um die Aufgabenstellung aus dem vorhergehenden Kapitel zu erfüllen.
+In diesem Kapitel geht es um die Frage, wieso wir uns für konkrete Technologien entschieden haben und im nachfolgenden Kapitel
+stellen wir die Implementierungsdetails vor.
+\begin{itemize}
+    \item \textit{Collection tier.} Wikipedia ist unsere Datenquelle.
+    \item \textit{Messaging queuing tier.} Wir nutzen ein Kafka-System: Weshalb Kafka? Welche Features
+        (Durable messaging, Different Messaging Systems, Scalability, Performance, Transaction Support, Security, ...) sind für uns von großer Relevanz?
+        Oder soll Kafka ein eigenes Kapitel bekommen?
+    \item \textit{Analysis tier.} Esper: warum / welche Features sind für uns von Relevanz? Wie sieht die Ausgabe nach der Analyse aus?
+    \item \textit{Data access tier.} ???
+\end{itemize}
