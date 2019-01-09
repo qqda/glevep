@@ -1,6 +1,10 @@
 %!TEX root = ./../main.tex
 \section{Prototyp}
-Folgende Dinge sollten in diesem Kapitel beschrieben sein:
+Zur Lösung der Aufgabenstellung haben wir einen lauffähigen Prototyp entwickelt, der die Machbarkeit demonstriert.
+Dafür haben wir die im vorhergehenden Kapitel genannten Technologien eingesetzt. Die Details zu den entstandenen
+Anwendungen stellen wir in diesem Kapitel vor.
+
+TODO: Bild der Architektur hier!
 
 \subsection{Collection Tier: Wikipedia}
 \begin{itemize}
@@ -37,6 +41,11 @@ TODO:
 - Vor- und Nachteile für eine De-/Serialisierung von der eigenen WikipediaEditEvent-Klasse diskutieren und der Einsatz von GSON?
 
 \subsection{Implementierungsdetails zum Analysis tier: Esper}
-\begin{itemize}
-    \item ...
-\end{itemize}
+In unserer Esper-Anwendung des Analysis Tier, nutzen wir Esper als Complex Event Processing-Werkzeug. Zur Verarbeitung
+der Wikipedia-Events haben wir die folgenden Schritte implementiert:
+\begin{enumerate}
+    \item \textit{Esper Initialisierung.}
+    \item \textit{Expression erzeugen.}
+    \item \textit{\code{UpdateListener} implementieren.}
+    \item \textit{Esper ausführen und Events auswerten.}
+\end{enumerate}
