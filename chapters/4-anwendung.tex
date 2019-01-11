@@ -42,14 +42,13 @@ Schritte nacheinander ausgeführt:
     Diese Daten sendet die Anwendung, über den zuvor erzeugten Producer, in das Kafka-Topic \code{wikiEdit}.
 \end{enumerate}
 
-Zusammenfassung:
-- Die Konfiguration von Kafka: Welche Topics gibt es? Partitionen? Consumer Groups? Replication? Persistence? (oder alles schon im vorherigen Kapitel schreiben)
 TODO:
+- Die Konfiguration von Kafka: Welche Topics gibt es? Partitionen? Consumer Groups? Replication? Persistence? (oder alles schon im vorherigen Kapitel schreiben)
 - Vor- und Nachteile für eine De-/Serialisierung von der eigenen WikipediaEditEvent-Klasse diskutieren und der Einsatz von GSON?
 
 \subsection{Implementierungsdetails zum Analysis tier: Esper}
-In unserer Esper-Anwendung des Analysis Tier, nutzen wir Esper als Complex Event Processing-Werkzeug. Zur Verarbeitung
-der Wikipedia-Events haben wir die folgenden Schritte implementiert:
+In unserer Esper-Anwendung, die Teil des Analysis Tier ist, nutzen wir Esper in Version 7.1 als Complex Event Processing-Werkzeug. Zur Verarbeitung
+der Wikipedia-Events implementieren wir die folgenden Schritte:
 
 Genaueres zu den erzeugten Expressions im nächsten Kapitel.
 
