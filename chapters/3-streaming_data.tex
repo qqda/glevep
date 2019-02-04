@@ -42,19 +42,26 @@ Die Event Processing Languages (EPL) sind Sprachen, die über Sequenz-, Konjunkt
 verfügen und für CEP entwickelt wurden \cite{hedtstck2017complex}. Als Basis der Operatoren werden Windows eingesetzt.
 Ist die Analyse vorbei und die Ergebnisse stehen fest, können diese verworfen werden, zurück in die Streaming-Plattform gespeichert werden,
 für eine Echtzeitnutzung oder die Stapelverarbeitung gespeichert werden \cite{psaltis2017streaming}. Wie der Abbildung \ref{fig:streaming_data_architecture-psaltis}
-zu entnehmen ist, schlägt Psaltis hierfür eine In-Memory-Datenbank (IMDB) und einen Data Access Tier vor.
+zu entnehmen ist, schlägt Psaltis hierfür eine In-Memory-Datenbank (IMDB), einen Data Access Tier und ein Long Term Storage vor.
 
-\subsection{Konkrete Implementierung unserer Streaming Data-Architektur}
-Die obigen vier Stufen der Streaming Data-Architektur von Psaltis \cite{psaltis2017streaming}
-haben wir mit den folgenden konkreten Technologien besetzt, um die Aufgabenstellung aus dem vorhergehenden Kapitel zu erfüllen.
-In diesem Kapitel geht es um die Frage, wieso wir uns für konkrete Technologien entschieden haben und im nachfolgenden Kapitel
-stellen wir die Implementierungsdetails vor.
+\subsection{Unsere Streaming Data-Architektur}
+In diesem Kapitel geht es um die Frage, welche Technologie wir in dem jeweiligen Tier einsetzen und wieso wir uns dafür entschieden haben.
+Technische Details, die die Implementierung betreffen, erläutern wir im nächsten Kapitel.
+TODO: Quellen zu den einzelnen Punkten/Systemen
 \begin{itemize}
-    \item \textit{Collection tier.} Wikipedia ist unsere Datenquelle.
-    Welches Pattern verwenden wir und wieso? Wie funktioniert das Pattern genau: siehe Psaltis https://goo.gl/qkgB8z
-    \item \textit{Messaging queuing tier.} Wir nutzen ein Kafka-System: Weshalb Kafka? Welche Features
-    (Durable messaging, Different Messaging Systems, Scalability, Performance, Transaction Support, Security, ...) sind für uns von großer Relevanz?
-    Oder soll Kafka ein eigenes Kapitel bekommen?
-    \item \textit{Analysis tier.} Esper: warum / welche Features sind für uns von Relevanz? Wie sieht die Ausgabe nach der Analyse aus?
-    \item \textit{Data access tier.} ???
+    \item \textit{Collection Tier.} Als Datenquelle haben wir Daten von Wikipedia. Konkret handelt es sich um die RecentChanges,
+    also die aktuellen Änderungen an Wikipedia-Einträgen. Details hierzu sind im nächsten Kapitel beschrieben. Wir entschieden uns für Wikipedia als
+    Datenquelle, weil es eine offene Plattform ist, die einen freien Zugang zu allen Daten gibt.
+
+    \item \textit{Messaging Queuing Tier.} Wir nutzen Kafka als Messaging-System, weil es skalierbar ist, einen hohen Datendurchsatz ermöglicht,
+    Real-Time-Messaging unterstützt, eine einfache Client-Anbindung ermöglicht und Events standardmäßig persistiert. Der letzte Punkt ist
+    besonders relevant, da für die Entwicklung der Regeln eine statische Datenmenge einfacher zu handhaben ist.
+
+    \item \textit{Analysis Tier.} Die Analyse der Wikipedia-EditEvents sollte deklarativ erfolgen. Dadurch erhofften wir uns ein
+    in kurzer Zeit eine Vielzahl an Regeln zu testen und so ein gutes Verständnis für die Daten zu erhalten. Aufgrund dieser Vorgabe
+    entschieden wir uns für Esper. Es bietet eine CEP-Implementierung, die nach einem regelbasierten Ansatz (somit deklarativ) arbeitet.
+    Ein weiterer Punkt, der für Esper sprach, war zum einen die Esper Processing Language und die Implementierung der Anwendung in Java.
+
+    \item \textit{In-Memory Data Store, Long Term Storage und Data Access Tier.} Für diese drei Komponenten haben wir selbst keine Implementierung vorgesehen.
+    Im Ausblick geben wir hierzu Ideen zu möglichen Erweiterungen.
 \end{itemize}
