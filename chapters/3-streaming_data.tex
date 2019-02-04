@@ -8,7 +8,7 @@ Umsetzung und vergleichen eingesetzten Technologien mit Alternativen.
 
 \subsection{Streaming Data-Architektur nach Psaltis}
 
-In \ref{fig:streaming_data_architecture-psaltis} sind die Komponenten der Streaming Data-Architektur, wie Psaltis \cite{psaltis2017streaming}
+In Abbildung \ref{fig:streaming_data_architecture-psaltis} sind die Komponenten der Streaming Data-Architektur, wie Psaltis \cite{psaltis2017streaming}
 sie entwickelt hat. Der Collection Tier ist der Einstiegspunkt, der Daten in das System bringt. Unabhängig von dem verwendeten
 Protokoll, werden die Daten mithilfe eines dieser Patterns übertragen \cite{psaltis2017streaming}:
 \begin{itemize}
@@ -30,10 +30,17 @@ Temperatur, Lautstärke oder auch Browser-Clicks.
 
 Um die Daten vom Collection Tier auf den Rest der Pipeline zu verteilen wird ein Messaging Queueing Tier implementiert.
 Das Message Queueing Model ist ein Modell zur Interprozesskommunikation. Anwendungen schicken
-Nachrichten an eine Nachrichtenschlange, von der andere Anwendnungen diese abholen können\cite{gray2003interprocess}.
+Nachrichten an eine Nachrichtenschlange, von der andere Anwendnungen diese abholen können \cite{gray2003interprocess}.
 Dadurch werden die eingesetzten Systeme voneinander entkoppelt und die Kommunikation findet nicht durch direkte Aufrufe,
 sondern über die Queue statt \cite{psaltis2017streaming}. Im vorliegenden Fall wird der Collection Tier vom Rest der Pipeline entkoppelt.
 
+Im Analysis Tier werden auf die Streams des Message Queueing Tiers kontinuierlich Queries angewandt um Muster in den Daten zu erkennen.
+Hier können Event Stream Processing-Systeme (ESP) wie z. B. Apache Flink, Apache Spark oder Apache Storm  oder
+auch Complex Event Processing-Systeme (CEP) wie z. B. Esper oder Apache Samza eingesetzt werden. \cite{psaltis2017streaming}
+
+- Wie sieht die Umsetzung aus: Windows, ESP vs CEP: deklarativ (EQL, CQL) vs imperativ, Skalierbarkeit, ...
+- Was passiert mit dem Output?
+- Welche Systeme kommen danach noch?
 
 \subsection{Konkrete Implementierung unserer Streaming Data-Architektur}
 Die obigen vier Stufen der Streaming Data-Architektur von Psaltis \cite{psaltis2017streaming}
