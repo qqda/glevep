@@ -1,5 +1,5 @@
 %!TEX root = ./../main.tex
-\section{Prototyp}
+\section{Prototyp}\label{section:prototyp}
 Zur Lösung der Aufgabenstellung haben wir einen lauffähigen Prototypen entwickelt, der die Machbarkeit demonstriert.
 Dafür haben wir die im vorhergehenden Kapitel genannten Technologien eingesetzt. Die Details zu den jeweils entstandenen
 Anwendungen stellen wir in diesem Kapitel vor.
@@ -91,7 +91,7 @@ Zur Verarbeitung der Wikipedia-Events haben wir zwei Lösungen umgesetzt, da die
 zum Erreichen der Ziele führte. Für ein besseres Verständnis geben wir einen kurzen Überblick über den gemeinsamen Aufbau beider
 Lösungen. Danach beschreiben wir die Details und Unterschiede der jeweiligen Lösungen und analysieren diese hinsichtlich der
 Zielerfüllung.
-In unserer Esper-Anwendung sind wir wie folgt vorgegangen:
+In unserer Esper-Anwendung sind wir im Allgemeinen wie folgt vorgegangen:
 
 \begin{enumerate}
     \item \textit{Esper Initialisierung.} Die Initialisierung von Esper besteht aus der Erzeugung einer \code{Configuration},
@@ -107,8 +107,33 @@ In unserer Esper-Anwendung sind wir wie folgt vorgegangen:
     komplexen Events.
 \end{enumerate}
 
-Abbildung \ref{fig:class_diagram_eventtypes}
 
+\subsubsection{Lösung 1}
+In unserer ersten Lösung war es unser Ziel, relevante Events durch die Modellierung geeigneter Ereignistypen zu detektieren.
+Ein relevantes Event besteht für uns aus einer definierten \textit{Anzahl an Benutzer} die in einem
+definierten \textit{Zeitraum} eine definierte \textit{Menge an Bearbeitungen} an einer Wikipedia-Seite vornehmen.
+Zur weiteren Konkretisierung zeigt Quellcode \ref{Solution1_EPL1} das erste EPL-Statement. Hierbei werden
+5 aufeinanderfolgende \code{WikipediaEditEvent}, die kein Bot sind, von unterschiedlichen Benutzern stammen
+und die gleiche URI aus der deutschsprachigen Wikipedia haben. Desweiteren wird mit der \code{checkWithin}-Methode
+geprüft, ob die Events \code{w2} bis \code{w5} jeweils den definierten Zeitabstand von 600 Sekunden nicht überschreiten.
+In Esper werden diese Methoden Single-Row-Functions genannt. Diese müssen in der \code{Configuration} angegeben werden
+und es handelt sich dabei um eine einfache Java-Methode, die einen \code{Boolean} als Rückgabetyp hat.
+
+\begin{lstlisting}[label=Solution1_EPL1,caption=Lösung 1: EPL-Statement 1,language=epl,firstnumber=1,captionpos=b]
+insert into WikipediaEditEventFive
+select w1, w2, w3, w4, w5
+from pattern[
+    every
+    w1=WikipediaEditEvent(bot = false, wiki='dewiki') ->
+    ...
+    w5=WikipediaEditEvent(w5.meta.uri = w1.meta.uri, bot = false, user <> w1.user, user <> w2.user, user <> w3.user, user <> w4.user, checkWithin(w1, w5, 600))
+]
+\end{lstlisting}
+
+Der Zugriff auf die Attribute der \code{WikipediaEditEvent}-Klasse erfolgt über Getter und Setter, die im Klassendiagramm
+der Abbildung \ref{fig:class_diagram_eventtypes} zur besseren Lesbarkeit nicht angegeben wurden.
+Ist das Muster aus dem Quellcode \ref{Solution1_EPL1} erfüllt, wird ein neues Event des Typs \code{WikipediaEditEventFive}
+eingefügt. Bei der Erzeugung werden dem Konstruktor die selektierten Objekte \code{w1} bis \code{w5} übergeben.
 
 \begin{figure}[h]
     \includegraphics[width=.5\textwidth]{images/Esper1.png}
@@ -116,9 +141,51 @@ Abbildung \ref{fig:class_diagram_eventtypes}
     \label{fig:class_diagram_eventtypes}
 \end{figure}
 
+Das zweite EPL-Statement ist von der Funktionsweise her analog zum ersten. Das Muster besteht jedoch nicht aus
+5 aufeinanderfolgenden \code{WikipediaEditEvent}, sondern aus
+4 aufeinanderfolgenden \code{WikipediaEditEventFive} die in einem Zeitraum von 20 Minuten aufgetreten sind.
 
-Genaueres zu den erzeugten Expressions im nächsten Kapitel.
+Die beiden Zahlen, 4 und 5 sind durch Ausprobieren ermittelt worden. Das zeigt sehr deutlich, dass das weder eine
+effiziente noch eine sehr erfolgreiche Lösung für unsere Aufgabe ist.
+Das Problem liegt an den sehr unterschiedlichen Menge an Bearbeitungen.
+Denn es gibt Wikipedia-Seiten, die dauerhaft einer großen Menge an Aktualisierungen unterworfen sind und wiederum andere Wikipedia-Seiten, die
+nur sehr sporadisch aktualisiert werden. Aus diesen Gründen ist es uns mit dieser Herangehensweise
+nicht gelungen eine Vereinheitlichung, für relevante Events, über alle Wikipedia-Seiten hinweg zu finden.
 
-Einsatz von GSON
+\subsubsection{Lösung 2}
+Die Probleme der Lösung 1 führten dazu, dass wir einen Ansatz verfolgten, bei dem die Betrachtung einzelner Seiten mehr im Fokus steht.
+In Lösung 2 sind wir ein Stück weg vom Website Activity Tracking, hin zur Anomalieerkennung gegangen. Das zeigt sich auch in der
+Architektur aus Abbildung \ref{fig:architektur_uebersicht}, in der neben der Esper-Anwendung auch ein Aufruf eines
+Burst-Detection-Algorithmus abgebildet ist.
+
+Konkret sieht die Implementierung so aus, dass wir 100 Events einer URI aggregieren und darauf wenden wir den Burst-Detection-Algorithmus an.
+Das ermöglicht es uns Anomalien -- ein starker Anstieg der Anzahl der Aktualisierungen -- einzelner URIs zu betrachten.
+Der Quellcode \ref{Solution2_EPL1} zeigt das EPL-Statement hierzu. Es wird eine URI-Partitionierung mithilfe eines
+Kontexts erstellt. Damit wird das Muster zur Aggregation der 100 Events je URI, mit einem Batch-Window, umgesetzt.
+
+\begin{lstlisting}[label=Solution2_EPL1,caption=Lösung 2: EPL-Statement 2,language=epl,firstnumber=1,captionpos=b]
+create context GroupByUri partition by meta.uri from WikipediaEditEvent
+
+context GroupByUri
+select *
+from WikipediaEditEvent(bot=false , wiki='dewiki').win:length_batch(100)
+\end{lstlisting}
+
+Wird das Muster erkannt, werden die Timestamps der 100 selektierten Events an die REST-Schnittstelle des BurstDetection-Service gesendet.
+Dieser wendet einen Burst-Detection-Algorithmus auf die Daten an und gibt ein Array mit \textquotedblleft Ebenen\textquotedblright zurück.
+Die Ebene 0 entspricht hierbei dem gesamten Datensatz von 100 Events. Je höher die Ebene, desto stärker und klarer abgegrenzt ist die
+Anomalie bzw. der Burst. Für uns hat sich gezeigt, dass Events aber der Ebene 2 einem relevanten Ereignis sehr nahe kommen.
+
+Betrachtet man die 100 Events der Wikipedia-Seite der Handball-Weltmeisterschaft der Männer 2019\footnote{https://de.wikipedia.org/wiki/Handball-Weltmeisterschaft\newline{}\_der\_M\%C3\%A4nner\_2019}
+in dem Zeitraum vom 25. Juni 2018 12:44 Uhr bis zum 12. Januar 2019 17:06 Uhr, ergibt sich folgende Ausgabe:
+
+\begin{lstlisting}[label=Solution2_Layers,caption=Ebenen der Burst-Detectionen,language=epl,firstnumber=1,captionpos=b]
+[[0, 1529923440000, 1547309160000], [1.0, 1546853700000, 1547309160000], [2.0, 1547136540000, 1547243280000]]
+\end{lstlisting}
+
+Die Ebene 0 entspricht hier allen 100 Events, die Ebene 1 geht vom 07. Januar 2019 10:35 Uhr bis zum 12. Januar 2019 17:06 Uhr und die
+Ebene 2 geht vom 10. Januar 2019 17:09 Uhr bis zum 11. Januar 2019 22:48 Uhr. Je höher die Ebene, desto kleiner und auch
+relevanter wird ein Bereich. Relevant heißt, dass in diesem Bereich mehr Events als sonst aufgetreten sind -- ein Burst.
+Das Beispiel zeigt also, dass wir durch die Lösung 2 für einzelne Wikipedia-Seiten relevante Ereignisse ableiten können.
 
 \subsection{BurstDetection-Implementierung}
