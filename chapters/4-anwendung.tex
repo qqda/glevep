@@ -79,26 +79,46 @@ Schritte nacheinander ausgeführt werden:
     Verarbeitung in das Kafka-Topic \code{wikiEdit}.
 \end{enumerate}
 
-Die Konfiguration von Kafka ist sehr einfach gehalten, da es sich hierbei nur um einen Prototypen handelt.
-Deswegen haben wir das eine Topic \code{wikiEdit}. Die Anwendung läuft nur auf einem Server, weshalb wir auch nur
-eine Partition einsetzen und keine Replikation haben.
+Die Konfiguration der Kafka-Topics ist sehr einfach gehalten, da es sich bei der Anwendung nur um einen Prototypen handelt.
+Wir haben ein Topic mit dem Namen \code{wikiEdit}. Da die Anwendung auf nur einem Server läuft, setzen wir auch nur
+eine Partition ein und haben keine Replikation. Eine Skalierung der Kafka-Anwendung auf mehrere
+parallel-arbeitende Server ist jedoch nicht ausgeschlossen für eine Produktivanwendung.
 
 \subsection{Implementierungsdetails zum Analysis Tier: Esper}
-In unserer Esper-Anwendung, die Teil des Analysis Tier ist, nutzen wir Esper in Version 7.1 als Complex Event Processing-Werkzeug. Zur Verarbeitung
-der Wikipedia-Events implementieren wir die folgenden Schritte:
+In unserer Esper-Anwendung, die das Hauptsystem des Analysis Tier ist, nutzen wir Esper in Version 7.1
+als Complex Event Processing-Werkzeug.
+Zur Verarbeitung der Wikipedia-Events haben wir zwei Lösungen umgesetzt, da die erste Lösung nicht
+zum Erreichen der Ziele führte. Für ein besseres Verständnis geben wir einen kurzen Überblick über den gemeinsamen Aufbau beider
+Lösungen. Danach beschreiben wir die Details und Unterschiede der jeweiligen Lösungen und analysieren diese hinsichtlich der
+Zielerfüllung.
+In unserer Esper-Anwendung sind wir wie folgt vorgegangen:
+
+\begin{enumerate}
+    \item \textit{Esper Initialisierung.} Die Initialisierung von Esper besteht aus der Erzeugung einer \code{Configuration},
+    der Erstellung und dem Starten von EPL-Statements, sowie dem Erzeugen von Listener-Klassen.
+    \item \textit{Kafka initialisieren und starten.} Um die Daten aus dem Messaging Queuing Tier zu bekommen haben wir einen
+    \code{KafkaConsumer<String, String>} implementiert.
+    Wir pollen in einer Endlosschleife alle 10 Millisekunden die Daten vom Kafka-Topic \code{wikiEdit}. Bei den empfangenen Daten
+    handelt es sich um einen String, der JSON enthält. Mithilfe der Gson-Bibliothek\footnote{https://github.com/google/gson}
+    konvertieren wir die JSON-Strings in Java-Objekte. Die daraus resultierenden Java-Objekte senden wir wiederum in das
+    Esper-System, damit darauf die EPL-Statements angewandt werden können.
+    \item \textit{Aktion ausführen, sobald das Muster erfüllt ist.} Ist das Muster erfüllt, wird die \code{update}-Methode der Listener-Klasse
+    aufgerufen. Es werden die alten und neuen Events übergeben. Daraus kann eine Aktion erfolgen, z.\,B. dass erzeugen eines neuen
+    komplexen Events.
+\end{enumerate}
+
+Abbildung \ref{fig:class_diagram_eventtypes}
+
+
+\begin{figure}[h]
+    \includegraphics[width=.5\textwidth]{images/Esper1.png}
+    \caption{Klassendiagramm der zwei Ereignistypen WikipediaEditEvent, WikipediaEditEventFive und der Helferklasse Meta}
+    \label{fig:class_diagram_eventtypes}
+\end{figure}
+
 
 Genaueres zu den erzeugten Expressions im nächsten Kapitel.
 
 Einsatz von GSON
-
-\begin{enumerate}
-    \item \textit{Esper Initialisierung.} Die Initialisierung von Esper besteht
-    \item \textit{Expression erzeugen.}
-    \item \textit{\code{UpdateListener} implementieren.}
-    \item \textit{Kafka initialisieren.}
-    \item \textit{Kafka Consumer erzeugen und in Endlosschleife Events pollen.}
-    \item \textit{Empfangene Events auswerten.}
-\end{enumerate}
-
 
 \subsection{BurstDetection-Implementierung}
