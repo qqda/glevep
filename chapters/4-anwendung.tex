@@ -38,10 +38,15 @@ Es sind nur die Attribut abgebildet, die in einem der nachfolgenden Teilsysteme 
 }
 \end{lstlisting}
 
-Die beiden Parameter \code{offset} und \code{uri}, innerhalb des \code{meta}-Objektes, sind von Kafka generiert und dienen der Wiederaufnahme eines abgebrochenen Streams.
+Die beiden Parameter \code{offset} und \code{uri}, innerhalb des \code{meta}-Objektes, stammen aus einem Kafka-System
+und dienen der Wiederaufnahme eines abgebrochenen Streams. Wikipedia setzt intern Apache Kafka als Messaging-System ein.
+Nach außen nutzt Wikipedia EventStreams. Das ist ein Webservice der kontinuierliche Datenströme mit strukturierten Daten
+über HTTP sendet\footnote{https://wikitech.wikimedia.org/wiki/EventStreams}. Die Basis-Technologie dessen, ist
+das Server-Sent Event (SSE) Protokoll. Der RecentChanges-Stream ist ein solcher Stream und kann über eine Client-Bibliothek
+konsumiert werden.
 
-TODO: Wie sieht das System dahinter aus; wie verarbeitet Wikipedia die Daten: Kafka. Wie liefert Wikipedia Daten aus; Was ist EventSource und was bringt es hier?
- Welches Pattern verwenden wir und wieso? Wie funktioniert das Pattern genau: siehe Psaltis https://goo.gl/qkgB8z und vorheriges Kapitel
+Wie im vorherigen Kapitel beschrieben, werden Daten vom Collection Tier mithilfe eines der aufgelisteten Pattern übertragen.
+SSE funktioniert nach dem One-way pattern, indem eine HTTP-Verbindung aufgemacht wird um Nachrichten zu empfangen \cite{EventSource_SSE}.
 
 \subsection{Implementierungsdetails zum Messaging Queuing Tier: Kafka}
 Im Messaging Queuing Tier setzen wir Apache Kafka in der Version 2.1 ein, um die Wikipedia-Events aus dem Collection Tier
