@@ -30,13 +30,13 @@ Temperatur, Lautstärke oder auch Browser-Clicks.
 
 Um die Daten vom Collection Tier auf den Rest der Pipeline zu verteilen wird ein Messaging Queueing Tier implementiert.
 Das Message Queueing Model ist ein Modell zur Interprozesskommunikation. Anwendungen schicken
-Nachrichten an eine Nachrichtenschlange, von der andere Anwendnungen diese abholen können \cite{gray2003interprocess}.
+Nachrichten an eine Nachrichtenschlange, von der andere Anwendungen diese abholen können \cite{gray2003interprocess}.
 Dadurch werden die eingesetzten Systeme voneinander entkoppelt und die Kommunikation findet nicht durch direkte Aufrufe,
 sondern über die Queue statt \cite{psaltis2017streaming}. Im vorliegenden Fall wird der Collection Tier vom Rest der Pipeline entkoppelt.
 
 Im Analysis Tier werden auf die Streams des Message Queueing Tiers kontinuierlich Queries angewandt um Muster in den Daten zu erkennen.
-Hier können Event Stream Processing-Systeme (ESP) wie z. B. Apache Flink, Apache Spark oder Apache Storm oder
-auch Complex Event Processing-Systeme (CEP) wie z. B. Esper oder Apache Samza eingesetzt werden. \cite{psaltis2017streaming}
+Hier können Event Stream Processing-Systeme (ESP) wie z.\,B. Apache Flink, Apache Spark oder Apache Storm oder
+auch Complex Event Processing-Systeme (CEP) wie z.\,B. Esper oder Apache Samza eingesetzt werden. \cite{psaltis2017streaming}
 In ESP wird die Verarbeitungslogik imperativ umgesetzt, wohingegen in CEP einen deklarativen Ansatz verfolgt.
 Die Event Processing Languages (EPL) sind Sprachen, die über Sequenz-, Konjunktions-, Disjunktions- und Negationsoperatoren
 verfügen und für CEP entwickelt wurden \cite{hedtstck2017complex}. Als Basis der Operatoren werden Windows eingesetzt.
