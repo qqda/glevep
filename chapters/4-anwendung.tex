@@ -49,35 +49,47 @@ Wie im vorherigen Kapitel beschrieben, werden Daten vom Collection Tier mithilfe
 SSE funktioniert nach dem One-way pattern, indem eine HTTP-Verbindung aufgemacht wird um Nachrichten zu empfangen \cite{EventSource_SSE}.
 
 \subsection{Implementierungsdetails zum Messaging Queuing Tier: Kafka}
-Im Messaging Queuing Tier setzen wir Apache Kafka in der Version 2.1 ein, um die Wikipedia-Events aus dem Collection Tier
-in unser eigenes Messaging-System zu überführen. In der Java-Anwendung werden die folgenden
-Schritte nacheinander ausgeführt:
+Im Messaging Queuing Tier setzen wir Apache Kafka in der Version 2.1 ein, um die im Collection Tier beschriebenen Wikipedia-Events
+in unser eigenes Messaging-System zu überführen. Hierfür haben wir eine Java-Anwendung entwickelt, in der die folgenden
+Schritte nacheinander ausgeführt werden:
 \begin{enumerate}
-    \item \textit{Kafka Initialisierung.} Den Host des Bootstrap-Servers setzen. Als Key- und Value-Serialisierer setzen wir
+    \item \textit{Kafka Initialisierung.} Den Host des Bootstrap-Servers setzen um eine Verbindung zu erzeugen.
+    Als Key- und Value-Serialisierer setzen wir
     jeweils den \code{StringSerializer} von Kafka ein. Das heißt, die Events werden als JSON-String in das Topic \code{wikiEdit}
     eingespeist. Zum Senden von Events erzeugen wir ein Producer-Objekt mit dem passenden Typ \code{Producer<String, String>}.
-    TODO: Vor- und Nachteile für eine De-/Serialisierung von der eigenen WikipediaEditEvent-Klasse diskutieren
+    An dieser Stelle war die Überlegung, anstelle eines String-Serialisierers für den Wert des Producers,
+    einen eigenen Serialisierer für die WikipediaEditEvent-Klasse einzusetzen. Wir entschieden uns aber für den
+    String-Serialisierer, da Wikipedia die Events auch als JSON-String überträgt und wir in Kafka selbst
+    keine weiteren Operationen an den Daten vornehmen. Eine mögliche Operation könnte ein Filter sein.
+    Aber das einzige Ziel von Kafka soll die Persistierung und Weitergabe von Daten sein und dafür ist keine Serialisierung in
+    einem bestimmten Typen notwendig. Außerdem verschiebt es Komplexität aus der Kafka-Anwendung
+    in die Consumer-Anwendungen.
     \item \textit{Erzeugung eines EventHandlers.} Für das Empfangen von EventSource-Nachrichten nutzen wir die Java-Bibliothek
     \textit{okhttp-eventsource}\footnote{https://github.com/launchdarkly/okhttp-eventsource}. Zur Verarbeitung der Events
     \code{onOpen}, \code{onClose}, \code{onMessage}, \code{onComment} und \code{onError} muss das Interface \code{EventHandler} von
     \textit{okhttp-eventsource} implementiert werden.
-    \item \textit{Erzeugung und Starten einer EventSource.} Mit der Stream-URI der Wikipedia-EventSource und des implementierten EventHandler-Interfaces
+    \item \textit{Erzeugung und Starten einer EventSource.} Mit der Stream-URI der Wikipedia-EventSource (für die RecentChanges ist das: https://stream.wikimedia.org/v2/stream/recentchange)
+    und des implementierten EventHandler-Interfaces
     kann ein \code{EventSource}-Objekt erzeugt werden. Das Objekt dient dem Starten und Beenden eines EventSource-Streams.
-    \item \textit{Beim Eintreffen eines Events, Senden einer Nachricht in ein Kafka-Topic.} Tritt ein Wikipedia-Event auf,
-    wird die \code{onMessage}-Methode des implementierten EventHandlers-Interface aufgerufen. Einer der beiden Parameter enthält die Daten
+    Die Daten werden dann, wie zuvor beschrieben, durch das SSE-Protokoll von Wikipedia an die Anwendung gesendet.
+    \item \textit{Beim Eintreffen eines Events: Senden einer Nachricht in ein Kafka-Topic.} Tritt ein Wikipedia-Event auf,
+    wird die \code{onMessage}-Methode des implementierten EventHandlers-Interface aufgerufen. Der zweite Parameter enthält die Daten
     des aufgetretenen Events. Der Zugriff auf die als JSON-String codierte Nachricht erfolgt über die \code{getDate()}-Methode.
-    Diese Daten sendet die Anwendung, über den zuvor erzeugten Producer, in das Kafka-Topic \code{wikiEdit}.
+    Diese Daten sendet die Anwendung, über den zuvor erzeugten Producer, ohne eine weitere
+    Verarbeitung in das Kafka-Topic \code{wikiEdit}.
 \end{enumerate}
 
-TODO:
-- Die Konfiguration von Kafka: Welche Topics gibt es? Partitionen? Consumer Groups? Replication? Persistence? (oder alles schon im vorherigen Kapitel schreiben)
-- Vor- und Nachteile für eine De-/Serialisierung von der eigenen WikipediaEditEvent-Klasse diskutieren und der Einsatz von GSON?
+Die Konfiguration von Kafka ist sehr einfach gehalten, da es sich hierbei nur um einen Prototypen handelt.
+Deswegen haben wir das eine Topic \code{wikiEdit}. Die Anwendung läuft nur auf einem Server, weshalb wir auch nur
+eine Partition einsetzen und keine Replikation haben.
 
 \subsection{Implementierungsdetails zum Analysis Tier: Esper}
 In unserer Esper-Anwendung, die Teil des Analysis Tier ist, nutzen wir Esper in Version 7.1 als Complex Event Processing-Werkzeug. Zur Verarbeitung
 der Wikipedia-Events implementieren wir die folgenden Schritte:
 
 Genaueres zu den erzeugten Expressions im nächsten Kapitel.
+
+Einsatz von GSON
 
 \begin{enumerate}
     \item \textit{Esper Initialisierung.} Die Initialisierung von Esper besteht
