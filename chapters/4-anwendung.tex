@@ -1,7 +1,7 @@
 %!TEX root = ./../main.tex
 \section{Prototyp}
-Zur Lösung der Aufgabenstellung haben wir einen lauffähigen Prototyp entwickelt, der die Machbarkeit demonstriert.
-Dafür haben wir die im vorhergehenden Kapitel genannten Technologien eingesetzt. Die Details zu den entstandenen
+Zur Lösung der Aufgabenstellung haben wir einen lauffähigen Prototypen entwickelt, der die Machbarkeit demonstriert.
+Dafür haben wir die im vorhergehenden Kapitel genannten Technologien eingesetzt. Die Details zu den jeweils entstandenen
 Anwendungen stellen wir in diesem Kapitel vor.
 
 \begin{figure*}
@@ -10,19 +10,40 @@ Anwendungen stellen wir in diesem Kapitel vor.
     \label{fig:architektur_uebersicht}
 \end{figure*}
 
-Abbildung \ref{fig:architektur_uebersicht} zeigt bisher nur eine sehr rudimentäre Übersicht und soll als Grundlage dienen.
-Die Verbindung zwischen Esper und Kafka muss noch genauer werden: Protokoll, senden von komplexen Events in neue Kafka-Topics.
+Abbildung \ref{fig:architektur_uebersicht} zeigt die Teilsysteme und deren Interaktion untereinander.
+
+% Abbildung \ref{fig:architektur_uebersicht} zeigt bisher nur eine sehr rudimentäre Übersicht und soll als Grundlage dienen.
+% Die Verbindung zwischen Esper und Kafka muss noch genauer werden: Protokoll, senden von komplexen Events in neue Kafka-Topics.
 
 \subsection{Collection Tier: Wikipedia}
-\begin{itemize}
-    \item Was für Daten nutzen wir? WikipediaEditEvents
-    \item Welche konkreten Daten hat ein WikipediaEditEvent?
-    \item Wie sieht das System dahinter aus; wie verarbeitet Wikipedia die Daten: Kafka
-    \item Was ist EventSource und was bringt es hier?
-        \item   Welches Pattern verwenden wir und wieso? Wie funktioniert das Pattern genau: siehe Psaltis https://goo.gl/qkgB8z
-\end{itemize}
+Wie zuvor beschrieben, stützt sich unser System auf Daten von Wikipedia. Wir nutzen den RecentChanges-Stream, der
+Events zu neu erstellten, aktualisierten und gelöschten Wikipedia-Seiten enthält\footnote{https://www.mediawiki.org/wiki/Manual:RCFeed}.
+Der Quellcode \ref{WikipediaRecentChangeJSON} zeigt einen Ausschnitt eines solchen Events.
+Es sind nur die Attribut abgebildet, die in einem der nachfolgenden Teilsysteme relevant sind.
 
-\subsection{Implementierungsdetails zum Messaging queuing tier: Kafka}
+\begin{lstlisting}[label=WikipediaRecentChangeJSON,caption=Wikipedia RecentChange-Event,language=json,firstnumber=1,captionpos=b]
+{
+    "bot": false,
+    "comment": "/* Politischer Werdegang */",
+    "id": 269108829,
+    "meta": {
+        "uri": "https://de.wikipedia.org/wiki/Ingeborg_H%C3%A4ckel",
+        "partition": 0,
+        "offset": 1329388977
+    },
+    "timestamp": 1547910734,
+    "title": "Ingeborg H\"ackel",
+    "user": "Eszet2000",
+    "wiki": "dewiki"
+}
+\end{lstlisting}
+
+Die beiden Parameter \code{offset} und \code{uri}, innerhalb des \code{meta}-Objektes, sind von Kafka generiert und dienen der Wiederaufnahme eines abgebrochenen Streams.
+
+TODO: Wie sieht das System dahinter aus; wie verarbeitet Wikipedia die Daten: Kafka. Wie liefert Wikipedia Daten aus; Was ist EventSource und was bringt es hier?
+ Welches Pattern verwenden wir und wieso? Wie funktioniert das Pattern genau: siehe Psaltis https://goo.gl/qkgB8z und vorheriges Kapitel
+
+\subsection{Implementierungsdetails zum Messaging Queuing Tier: Kafka}
 Im Messaging Queuing Tier setzen wir Apache Kafka in der Version 2.1 ein, um die Wikipedia-Events aus dem Collection Tier
 in unser eigenes Messaging-System zu überführen. In der Java-Anwendung werden die folgenden
 Schritte nacheinander ausgeführt:
@@ -47,7 +68,7 @@ TODO:
 - Die Konfiguration von Kafka: Welche Topics gibt es? Partitionen? Consumer Groups? Replication? Persistence? (oder alles schon im vorherigen Kapitel schreiben)
 - Vor- und Nachteile für eine De-/Serialisierung von der eigenen WikipediaEditEvent-Klasse diskutieren und der Einsatz von GSON?
 
-\subsection{Implementierungsdetails zum Analysis tier: Esper}
+\subsection{Implementierungsdetails zum Analysis Tier: Esper}
 In unserer Esper-Anwendung, die Teil des Analysis Tier ist, nutzen wir Esper in Version 7.1 als Complex Event Processing-Werkzeug. Zur Verarbeitung
 der Wikipedia-Events implementieren wir die folgenden Schritte:
 
