@@ -22,53 +22,66 @@ Wavelet-based Signals (EDCoW)\\Der Stream wird Batches aufgeteilt, die dann per 
 \subsection{Burst Detection}
 Da sich die Erkennung globaler Events mittels Esper als zumindest unvollständig erwies, wurden Methoden untersucht um das Verfahren zu Ergänzen oder zu Ersetzen.\\
 
-Globale Events haben unter Anderem auch die Eigenschaft eine erhöhte Aktivität im Edit-Event-Stream zu verursachen. Erhöhte Aktivität (Bursts) ist ein Phänomen das bereits seit Jahrzehnten untersucht wird, daher existieren eine Reihe von Theorien und abgeleiteten Algorithmen. Dabei ist die zeitnahe Erstellung von Ergebnissen wichtig, weswegen auf eine wenig aufwändige Verarbeitung optimiert wird. Bursts besitzen eine Reihe an Attributen, die abhänig vom Use Case defininert werden. Dazu zählt der Zeitraum der jeweils auf das Auftreten eines Bursts untersucht wird, die Intensistät und die Verteilung der Intensistät auf den betrachteten Zeitraum.
+Globale Events haben unter Anderem auch die Eigenschaft eine erhöhte Aktivität im Edit-Event-Stream zu verursachen. Erhöhte Aktivität (Bursts) ist ein Phänomen das bereits seit Jahrzehnten untersucht wird, daher existieren eine Reihe von Theorien und abgeleiteten Algorithmen. Dabei ist die zeitnahe Erstellung von Ergebnissen wichtig, weswegen auf eine wenig aufwändige Verarbeitung hin optimiert wird. Bursts besitzen eine Reihe an Attributen, die abhänig vom Use Case defininert werden. Dazu zählt der Zeitraum der jeweils auf das Auftreten eines Bursts untersucht wird, die Intensistät und die Verteilung der Intensistät auf den betrachteten Zeitraum.\\
+
+Generell kann eine Datentstrom auf zwei Methoden betrachtet werden. Beim Point Monitoring wird nur das aktuelle Ereigniss betrachetet. Liegt der Wert eines Attributs in einen vordefinierten Bereich oder überschreitet es einen Schwellwert wird ein Burst erkannt. Beim Aggregate Monitoring werden über einen Zeitraum (Windows) hinweg Ereignisse aggregiert. Dabei werden drei Zeitfenstertypen unterschieden. Beim Landmark Window wird der Zeitraum durch einmal fest gelegte Zeitpunkte definiert.
+Das Sliding Window hingegen bewegt sich durch die Zeit. Dabei wird dessen Größe sowie das Interval mit dem es sich bewegt festgelegt. Die Paramter können als Zeitangaben oder als Zählangaben erfolgen. Somit kann ein Fenster entweder nach einer gewissen Zeit neu erstellt werden oder nach einer bestimmten Anzahl an Ereignissen. Beim Damped Window werden zudem jedem Ereignis Gewichtungen erteilt, je länger ein Ereignis zurückliegt desto weniger Gewicht bekommt es mit Fortschreiten der Zeit. \cite{Zhu:2003:EEB:956750.956789}\\
+
+\begin{figure*}[htbp]
+\centerline{\includegraphics[height=4.4cm]{images/ratiopyramid.png}}
+\caption{Von der klassischen 'Aggregataion Pyramid' zur 'Ratio Aggreation Pyramid' \cite{yuan2007online}}
+\label{fig:ratiopyramid}
+\end{figure*}
 
 
-Online Burst Detection Over High Speed Short Text Streams
-\cite{yuan2007online}
+\begin{figure}[h]
+    \includegraphics[width=.5\textwidth]{images/wavelet.jpg}
+    \caption{Wavelet Tree \cite{Zhu:2003:EEB:956750.956789}}
+    \label{fig:wavelet}
+\end{figure}
+
+Eine spezielles Modell entwickeln Zhu et. al. in 'Efficient Elastic Burst Detection in Data Streams' \cite{Zhu:2003:EEB:956750.956789} mit dem Elastic Window, bei dem   die Größe der Zeitfenster variiert. Somit können die Bursts dynamischer durch deren Characterisik und unabhäniger von ihrer Dauer erkannt werden, die oftmals nicht im Vorfeld festgelegt werden kann. Dafür wird ein Wavelet-Tree vom Stream erzeugt, bei dem die Wavelet-Kooefizienten den Aggregaten der Fenster entsprechen. Wie in Abbildung \ref{wavelet} zu sehen ist, wird zu Beginn der Stream in Fenster unterteilt, die disjunkt nebeneinander liegen. Je Fenster wird ein Aggregat erstellt, in der Regel werden dazu die Ergeinisse eines bestimmten Typs oder mit gleichen Attributen gezählt. Diese Aggreagte bilden nun selbst wiederum einen Stream. Das Verfahren wird wiederholt, vorrausgesetzt es befinden sich entsprechende Ereignisse bzw. Aggregierte Ereignisse im Stream. Mit jedem Schritt wird der betrachtete Zeitabschnitt größer und man bewegt in das nächst höhere Level Richtung Wurzel des Baums. Zu jedem Level wird ein Schwellwert angegeben, bei dessen Überscheitung ein Burst ausgelöst wird.
+
+\begin{figure*}[htbp]
+\centerline{\includegraphics[height=6.3cm]{images/slopepyramid.jpg}}
+\caption{Berechnungsbeispiel zur 'Slope Pyramid' \cite{yuan2007online}}
+\label{fig:slopepyramid}
+\end{figure*}
+
+% \begin{figure*}
+%     \includegraphics[width.5=\textwidth]{images/ratiopyramid.jpg}
+%     \caption{Von der klassischen 'Aggregataion Pyramid' zur 'Ratio Aggreation Pyramid' \cite{yuan2007online}}
+%     \label{fig:ratiopyramid}
+% \end{figure*}
 
 
-Event Detection with Burst Information Networks
-\cite{ge2016event}
 
-Realtime
-Die Realtime-Burst Detection über mehrere Fenstergrößen ist für die Analyse von Datenströmen hilfreich. Die üblichen Burst-Detektionsverfahren sind für die Echtzeiterkennung nicht effektiv. Die Realtime-Burst Detection benötigt eine neue Burst-Erkennungsmethode, die die Berechnung reduziert, indem redundante Datenaktualisierungen vermieden werden. Dabei wird ein Ereignis bei seinem Auftreten daraufhin analysiert inwiefern die Ankunftshäufigkeit und im Vergleich zur vorherigen Perioden ansteigt.
+Yuan et. al. entwickeln in 'Online Burst Detection Over High Speed Short Text Streams' \cite{yuan2007online} ein Verfahren das auf einem Wavelet-Tree basiert. Dieser kann auch als Pyarmide betratchtet werden, mit den Levels die dem Aggregierungsgrad entsprechen. Da die Burst-Detection sich auf den Schwellwert des jeweiligen Lebels stützt, muss dieser zu beginnder Analyse feststehen. Das kann eine Herrausforderung sein, denn damit muss auch die Menge an Ereignissen im Stream eingeschätzt werden können. Um diese Problem zu lösen werden keine Absoluten Angaben der Aggregatewerte verwendet, wie zum Beispiel deren Anzahl. Stattdessen wird angegeben, wieviele relevante Events aggregiert wurden im Verhältnis zu allen aufgetretenen Events im betroffenen Zeitraum. Abbildung \ref{fig:ratiopyramid}. Eine weitere Komprimierung wird durch die Slope Pyarmid, wie in Abbildung \ref{fig:slopepyramid} dargestellt, erreicht. Dabei wird der Fokus auf die Veränderung von Fenster zu Fenster gelegt. Dazu wird Verhältniswert aus der Ratio Pyamid herangezogen; der Wert des vorhegehenden Fensters wird mit dem des aktuellen Fenster dividiert.\cite{yuan2007online}\\
 
-\cite{ebina2011real}
-A real-time burst detection method
+Besondere Anforderungen stellt die Realtime-Burst Detection in Verbindung mit der gleichzeitigen Betrachtung mehrerer Fenstergrößen. Übliche Burst-Detektionsverfahren sind für eine Echtzeiterkennung nicht schnell genug, daher wurde von Ebina et. al. \cite{ebina2011real}  Burst-Erkennungsmethode weiter entwickelt. Das Ziel ist dabei die Berechnungszeit zu reduzieren, indem redundante Datenaktualisierungen wie bei Yuan et. al. vermieden werden. Dazu werden  die letzen Zellen der Slope Pyarmid auf effizientere Weise berechnet.\cite{ebina2011real}\\
 
-Efficient Elastic Burst Detection in Data Streams 
-\cite{Zhu:2003:EEB:956750.956789}
+Je nach Use Case sind auch aufwändigere Analysen wie in 'Event Detection with Burst Information Networks' \cite{ge2016event} notwendig.
 
-Detecting ‘bursts’ in time series data with Kleinberg’s burst detection algorithm
-\cite{kleinberg1}
+% Detecting ‘bursts’ in time series data with Kleinberg’s burst detection algorithm
+% \cite{kleinberg1}
 
 \subsection{Social Media Analyse}
+Eine ganze Reihe von Arbeiten beschäftigt sich mit der Analyse der Aktivitäten der Wikipedia-Nutzer.
 
-Wikipedia
+\begin{itemize}
+\item Extracting Event-Related Information from Article Updates in Wikipedia \cite{10.1007978-3-642-36973-5_22}
+\item Ongoing events in Wikipedia: a cross-lingual case study \cite{gottschalk2017ongoing}
+\item How much is Wikipedia Lagging Behind News? \cite{fetahu2015much}
+\item Event analysis in social multimedia: a survey \cite{liu2016event}
+\item A cloud-enabled automatic disaster analysis system of multi-sourced data streams: An example synthesizing social media, remote sensing and Wikipedia data \cite{huang2017cloud}
+\end{itemize}
 
-Extracting Event-Related Information from
-Article Updates in Wikipedia
-\cite{10.1007978-3-642-36973-5_22}
+% Des weiteren 
 
+% Pinterest
+% I need to try this?: a statistical overview of pinterest
+% \cite{gilbert2013need}
 
-\cite{gottschalk2017ongoing},
-  Ongoing events in Wikipedia: a cross-lingual case study
-
-\cite{fetahu2015much},
-  How much is Wikipedia Lagging Behind News?
-
-\cite{liu2016event}
-  Event analysis in social multimedia: a survey
-
-A cloud-enabled automatic disaster analysis system of multi-sourced data streams: An example synthesizing social media, remote sensing and Wikipedia data
-\cite{huang2017cloud}
-
-Pinterest
-I need to try this?: a statistical overview of pinterest
-\cite{gilbert2013need}
-
-Twitter
-An evaluation of the run-time and task-based performance of event detection techniques for Twitter
-\cite{weiler2016evaluation}
+% Twitter
+% An evaluation of the run-time and task-based performance of event detection techniques for Twitter
+% \cite{weiler2016evaluation}
