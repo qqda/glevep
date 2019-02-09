@@ -1,5 +1,29 @@
 \section{Verwandte Arbeiten}
+
+\begin{figure*}
+    \includegraphics[width=\textwidth]{images/eventdetect.png}
+    \caption{Niagarino Anfragen der fünf Erkennungs-Methoden}
+    \label{fig:eventdetect}
+\end{figure*}
+
+\subsection{Event-Driven Detection}
+Weiler et. al. \cite{weiler2016evaluation} evaluieren fünf State of the Art Techniken zur Erkennung von noch unbekannten Ereignissen.Niagarino wird als Implementation verwendet, eine Plattform die Apache Storm ähnelt. Die Techniken wurden als Anfragen umgesetzt, wie in \ref{fig:eventdetect} dargestellt.  Twitter-Events dienen als Datenbasis, die einem Pre-Processing gefiltert werden. Dabei werden Retweets entfernt und der Inhalt der restlichen Tweets gesäubert, es verbleiben bibliographisch erkannte englische Wörter. 
+
+\begin{itemize}
+\item TopN\\Jedem Wort wird ein Wert zugewiesen, der auf dem Inverse-Document-Frequency des Zeitfenster beruht. Nur die N-Wichtigtsten Wörter verbleiben als Event.
+\item Latent Dirichlet Allocation (LDA)\\Ist ein hierarchisches Bayes-Modell, das die Variation des Vokabulars in einer Gruppe von Dokumenten bewertet. Für jedes Zeitfenster extrahiert LDA  vermutete Ereignisse, die durch Ausdrücke beschrieben werden. 
+\item Shifty\\Dabei werden die Veränderungen von TopN bewertet die sich zwischen zwei Zeitfenstern ereignen.
+\item Event Detection with Clustering of
+Wavelet-based Signals (EDCoW)\\Der Stream wird Batches aufgeteilt, die dann per Wavelet-Analyse zu einem weiteren Event zusammengefasst werden, in dem Wörter mit erkannten Bursts stehen. Davon werden dann unwichtige Wörter entfernt. Durch Clustering erhält das Ergbnis Burst-Events die mit zwei Termen beschreiben werden.
+\item The Wavelet Analysis Topic Inference Summarization
+(WATIS)\\ Eine Weiterentwicklung des (EDCoW), bei dem zu jedem Burst fünf Terme geliefert werden.
+\end{itemize}
+
 \subsection{Burst Detection}
+Da sich die Erkennung globaler Events mittels Esper als zumindest unvollständig erwies, wurden Methoden untersucht um das Verfahren zu Ergänzen oder zu Ersetzen.\\
+
+Globale Events haben unter Anderem auch die Eigenschaft eine erhöhte Aktivität im Edit-Event-Stream zu verursachen. Erhöhte Aktivität (Bursts) ist ein Phänomen das bereits seit Jahrzehnten untersucht wird, daher existieren eine Reihe von Theorien und abgeleiteten Algorithmen. Dabei ist die zeitnahe Erstellung von Ergebnissen wichtig, weswegen auf eine wenig aufwändige Verarbeitung optimiert wird. Bursts besitzen eine Reihe an Attributen, die abhänig vom Use Case defininert werden. Dazu zählt der Zeitraum der jeweils auf das Auftreten eines Bursts untersucht wird, die Intensistät und die Verteilung der Intensistät auf den betrachteten Zeitraum.
+
 
 Online Burst Detection Over High Speed Short Text Streams
 \cite{yuan2007online}
