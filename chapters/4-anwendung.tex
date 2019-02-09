@@ -179,7 +179,7 @@ Anomalie bzw. der Burst. Für uns hat sich gezeigt, dass Events aber der Ebene 2
 Betrachtet man die 100 Events der Wikipedia-Seite der Handball-Weltmeisterschaft der Männer 2019\footnote{https://de.wikipedia.org/wiki/Handball-Weltmeisterschaft\newline{}\_der\_M\%C3\%A4nner\_2019}
 in dem Zeitraum vom 25. Juni 2018 12:44 Uhr bis zum 12. Januar 2019 17:06 Uhr, ergibt sich folgende Ausgabe:
 
-\begin{lstlisting}[label=Solution2_Layers,caption=Ebenen der Burst-Detectionen,language=epl,firstnumber=1,captionpos=b]
+\begin{lstlisting}[label=Solution2_Layers,caption=Ebene 0\, 1 und 2 der Burst-Detectionen,language=epl,firstnumber=1,captionpos=b]
 [[0, 1529923440000, 1547309160000], [1.0, 1546853700000, 1547309160000], [2.0, 1547136540000, 1547243280000]]
 \end{lstlisting}
 
@@ -189,3 +189,6 @@ relevanter wird ein Bereich. Relevant heißt, dass in diesem Bereich mehr Events
 Das Beispiel zeigt also, dass wir durch die Lösung 2 für einzelne Wikipedia-Seiten relevante Ereignisse ableiten können.
 
 \subsection{BurstDetection-Implementierung}
+Die Burst-Detection ist in Python geschrieben. Es handelt sich hierbei um ein REST-Interface mit einem Endpunkt,
+der beim Aufruf lediglich als Wrapper für den Aufruf der Burst-Detection fungiert. Die Burst-Detection wird durch ein
+zusätzliches Python-Package eingefügt und ist auch austauschbar.
