@@ -2,21 +2,23 @@
 \subsection{Erkennung globler Events}
 Die Erkennung global relevanter Events wurde bereits in \ref{sec:Einleitung} beschreiben.
 
-Der Fokus soll dabei auf der Verarbeitung der Events in Echtzeit, dem Erkennen von Ereignismustern im Wikipedia-Edit-Eventsstrom und dem generieren von komplexen Events liegen. Eine komplexe Datenanalyse nicht vorgesehen, statt dessen soll durch eine einfache Mustererkennung genutzt werden. Dabei werden Events innerhalb von Zeitfenstern aggregiert und in Beziehung zueinander gesetzt um Rückschlüsse auf 'Global Events' zu ziehen.
+Der Fokus liegt dabei auf der Verarbeitung der Events in Echtzeit, dem Erkennen von Ereignismustern im Wikipedia-Edit-Eventsstrom und dem generieren von komplexen Events. Eine komplexe Datenanalyse ist nicht vorgesehen, statt dessen wird durch eine einfache Mustererkennung genutzt. Dabei werden Events innerhalb von Zeitfenstern aggregiert und in Beziehung zueinander gesetzt um Rückschlüsse auf 'Global Events' zu ziehen.
 
-Die Zielsetzung, den Fokus auf das Erkennen von Ereignismustern in Wikipedia-Edit-Eventsstrom zu setzen und dabei auf komplexe Datenanalyse zu verzichten, schränkt die Erfolgsrate ein.
+Die Zielsetzung, den Fokus auf das Erkennen von Ereignismustern in Wikipedia-Edit-Eventsstrom zu setzen und dabei auf komplexe Datenanalyse zu verzichten, schränkt die Anzahl erkanner 'Global Events' ein.
 
-Ebenso kann in der Realtime-Analyse ein Hinzuziehen externer Informationen nicht erfolgen. Deswegen sind Abfragen externer Quellen, eine Textanalyse der Änderungen auf die in den Edits verweisen wird, eine Verortung der Seite in der Wikipedia-Hierarchie und das Parsen externer Web-Seiten zum Zweck der weiteren Informationsgewinngung nicht möglich. 
+In der Realtime-Analyse kann ein Hinzuziehen externer Informationen nicht erfolgen. Deswegen sind Abfragen externer Quellen, eine Textanalyse der Änderungen auf die in den Edits verweisen wird, eine Verortung der Seite in der Wikipedia-Hierarchie und das Parsen externer Web-Seiten zum Zweck der weiteren Informationsgewinngung nicht möglich. 
 
 % Einfache Muster können in Echtzeit erkannt werden. Bei erfolgreicher Erkennung dieser Muster werden komplexe Events erzeugt. Dadurch erhöht sich die Informationsdichte im Stream und vergrößert die Granularität, verringt die Frequenz. Aufwändigeren Analysen werden daher an komplexe Events gebunden.
 
 
 \subsection{Entworfene Anwendungsfälle}
-Die Analyse des Wikipedia-Edit-Streams wurde auf weitere Anwendungsfälle ertweitert.
+Die Mustererkennung im Wikipedia-Edit-Stream kann für weitere Anaylsen verwendet werden. Exemplarisch wurden weitere Anwendungsfälle entwickelt, die sich im Umfeld der Wikipedia-Nutzer umsetzen lassen. Die vorgestellen Use Cases leiten sich aus Problemen kollaborativer Texterstellung ab, 
 
 \begin{itemize}
-    \item Edit-Wars Detection\\ Bei Edit-Wars stimmen die Vorstellungen über den Inhalt des Artikels der Autoren nicht überein. Die Folge sind wiederholtes Revidieren der Änderungen, häufig in hoher Frequenz.
-    \item Fraud Detection\\Ab wann Vandalismus \\Vorrausgesetzt Muster, die sich temporal entwickeln
-    \item Load Prediction\\ TODO
-    \item Semantic-Clustering\\ TODO
+    \item Edit-Wars Detection\\ Bei Edit-Wars stimmen die Vorstellungen über den Inhalt des Artikels der Autoren nicht überein. Die Folge sind wiederholtes gegenseitiges Revidieren der Änderungen, häufig in hoher Frequenz.\cite{wikipedia.}\\ Daraus entstehen folgende Use Cases: Erkennen von aktiven Edit-Wars. Erkennen von Situationen die zu Edit-Wars führen. Identifizieren von Nutzern die im indirekten Zusammenhang mit Edit-Wars stehen.
+    \item Fraud Detection\\Unter Vandalismus wird im Kontext der Wikipedia die Änderung von Textinhalten oder Bildern durch Benutzer mittels Einstellung offensichtlich unsinniger oder beleidigender, diffamierender, vulgärer oder obszöner Inhalte verstanden. Vandalismus wird typischerweise durch unangemeldete Benutzer verübt.\cite{wikipedia.} \\Use Cases: Ab wann gilt eine Änderung als Vandalismus? Gibt es Muster, die sich vor einem Vandalismus ereignen? 
+    \item Nutzerkreise\\Im Zentrum stehen Nutzer die untereinander in Verdindung stehen.\\Use Cases: Gibt es Nutzergruppen die ähnliche thematische Expertise aufweisen? Bilden sich auch Metagruppen mit noch unbekannten Gemeinsamkeiten?
+    \item Machtprozesse\\Wie in allen Organisationen entstehen auch in der Wikipedia Machtstrukturen.\\Use Cases:Bildet sich die Organisationshierarchie in den Edits ab? Läßt sich eine Tendenz zur Abschottung durch Selbstergänzung der Experten erkennen?\cite{wikipedia.}
+    \item Request Prediction\\Die Menge der Nutzer-Anfragen an die Wikipedia-Serverinfrastruktur variiert vermtulich.\\Use Cases: Welche Muster lassen sich in der Nutzerlast erkennen? Läßt sich die Nutzerlast vorhersagen?
+    %\item Semantic-Clustering\\ \\Use Cases
 \end{itemize}
