@@ -15,8 +15,8 @@ Abbildung \ref{fig:architektur_uebersicht} zeigt die Teilsysteme und deren Inter
 % Abbildung \ref{fig:architektur_uebersicht} zeigt bisher nur eine sehr rudimentäre Übersicht und soll als Grundlage dienen.
 % Die Verbindung zwischen Esper und Kafka muss noch genauer werden: Protokoll, senden von komplexen Events in neue Kafka-Topics.
 
-\subsection{Collection Tier: Wikipedia}
-Wie zuvor beschrieben, stützt sich unser System auf Daten von Wikipedia. Wir nutzen den RecentChanges-Stream, der
+\subsection{Collection-Tier: Wikipedia}
+Wie zuvor beschrieben, stützt sich unser System auf Daten von Wikipedia. Wir nutzen den Recent-Changes-Stream, der
 Events zu neu erstellten, aktualisierten und gelöschten Wikipedia-Seiten enthält\footnote{https://www.mediawiki.org/wiki/Manual:RCFeed}.
 Der Quellcode \ref{WikipediaRecentChangeJSON} zeigt einen Ausschnitt eines solchen Events.
 Es sind nur die Attribut abgebildet, die in einem der nachfolgenden Teilsysteme relevant sind.
@@ -42,14 +42,14 @@ Die beiden Parameter \code{offset} und \code{uri}, innerhalb des \code{meta}-Obj
 und dienen der Wiederaufnahme eines abgebrochenen Streams. Wikipedia setzt intern Apache Kafka als Messaging-System ein.
 Nach außen nutzt Wikipedia EventStreams. Das ist ein Webservice der kontinuierliche Datenströme mit strukturierten Daten
 über HTTP sendet\footnote{https://wikitech.wikimedia.org/wiki/EventStreams}. Die Basis-Technologie dessen, ist
-das Server-Sent Event (SSE) Protokoll. Der RecentChanges-Stream ist ein solcher Stream und kann über eine Client-Bibliothek
+das Server-Sent Event (SSE) Protokoll. Der Recent-Changes-Stream ist ein solcher Stream und kann über eine Client-Bibliothek
 konsumiert werden.
 
-Wie im vorherigen Kapitel beschrieben, werden Daten vom Collection Tier mithilfe eines der aufgelisteten Pattern übertragen.
+Wie im vorherigen Kapitel beschrieben, werden Daten vom Collection-Tier mithilfe eines der aufgelisteten Pattern übertragen.
 SSE funktioniert nach dem One-way pattern, indem eine HTTP-Verbindung aufgemacht wird um Nachrichten zu empfangen \cite{EventSource_SSE}.
 
-\subsection{Implementierungsdetails zum Messaging Queuing Tier: Kafka}
-Im Messaging Queuing Tier setzen wir Apache Kafka in der Version 2.1 ein, um die im Collection Tier beschriebenen Wikipedia-Events
+\subsection{Implementierungsdetails zum Messaging-Queuing-Tier: Kafka}
+Im Messaging-Queuing-Tier setzen wir Apache Kafka in der Version 2.1 ein, um die im Collection-Tier beschriebenen Wikipedia-Events
 in unser eigenes Messaging-System zu überführen. Hierfür haben wir eine Java-Anwendung entwickelt, in der die folgenden
 Schritte nacheinander ausgeführt werden:
 \begin{enumerate}
@@ -68,7 +68,7 @@ Schritte nacheinander ausgeführt werden:
     \textit{okhttp-eventsource}\footnote{https://github.com/launchdarkly/okhttp-eventsource}. Zur Verarbeitung der Events
     \code{onOpen}, \code{onClose}, \code{onMessage}, \code{onComment} und \code{onError} muss das Interface \code{EventHandler} von
     \textit{okhttp-eventsource} implementiert werden.
-    \item \textit{Erzeugung und Starten einer EventSource.} Mit der Stream-URI der Wikipedia-EventSource (für die RecentChanges ist das: https://stream.wikimedia.org/v2/stream/recentchange)
+    \item \textit{Erzeugung und Starten einer EventSource.} Mit der Stream-URI der Wikipedia-EventSource (für die Recent-Changes ist das: https://stream.wikimedia.org/v2/stream/recentchange)
     und des implementierten EventHandler-Interfaces
     kann ein \code{EventSource}-Objekt erzeugt werden. Das Objekt dient dem Starten und Beenden eines EventSource-Streams.
     Die Daten werden dann, wie zuvor beschrieben, durch das SSE-Protokoll von Wikipedia an die Anwendung gesendet.
@@ -84,9 +84,9 @@ Wir haben ein Topic mit dem Namen \code{wikiEdit}. Da die Anwendung auf nur eine
 eine Partition ein und haben keine Replikation. Eine Skalierung der Kafka-Anwendung auf mehrere
 parallel-arbeitende Server ist jedoch nicht ausgeschlossen für eine Produktivanwendung.
 
-\subsection{Implementierungsdetails zum Analysis Tier: Esper}
-In unserer Esper-Anwendung, die das Hauptsystem des Analysis Tier ist, nutzen wir Esper in Version 7.1
-als Complex Event Processing-Werkzeug.
+\subsection{Implementierungsdetails zum Analysis-Tier: Esper}
+In unserer Esper-Anwendung, die das Hauptsystem des Analysis-Tier ist, nutzen wir Esper in Version 7.1
+als Complex-Event-Processing-Werkzeug.
 Zur Verarbeitung der Wikipedia-Events haben wir zwei Lösungen umgesetzt, da die erste Lösung nicht
 zum Erreichen der Ziele führte. Für ein besseres Verständnis geben wir einen kurzen Überblick über den gemeinsamen Aufbau beider
 Lösungen. Danach beschreiben wir die Details und Unterschiede der jeweiligen Lösungen und analysieren diese hinsichtlich der
@@ -96,7 +96,7 @@ In unserer Esper-Anwendung sind wir im Allgemeinen wie folgt vorgegangen:
 \begin{enumerate}
     \item \textit{Esper Initialisierung.} Die Initialisierung von Esper besteht aus der Erzeugung einer \code{Configuration},
     der Erstellung und dem Starten von EPL-Statements, sowie dem Erzeugen von Listener-Klassen.
-    \item \textit{Kafka initialisieren und starten.} Um die Daten aus dem Messaging Queuing Tier zu bekommen haben wir einen
+    \item \textit{Kafka initialisieren und starten.} Um die Daten aus dem Messaging-Queuing-Tier zu bekommen haben wir einen
     \code{KafkaConsumer<String, String>} implementiert.
     Wir pollen in einer Endlosschleife alle 10 Millisekunden die Daten vom Kafka-Topic \code{wikiEdit}. Bei den empfangenen Daten
     handelt es sich um einen String, der JSON enthält. Mithilfe der Gson-Bibliothek\footnote{https://github.com/google/gson}

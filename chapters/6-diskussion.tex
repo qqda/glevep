@@ -3,7 +3,7 @@
 - Die Anzahl und Verteilung der Änderungen an Wikipedia-Seiten sind zu verschieden, um daraus ein allgemeingültiges Muster für relevante Events abzuleiten.
 Da ein relevantes Ereignis auch nicht auf jeder Wikipedia-Seite bestimmten gesetzmäßgkeiten folgt, spielt die Betrachtung der vergangenen Events eine große Rolle für uns.
 Erst dadurch kann mithilfe eines Burst-Detection-Algorithmus ein relevantes Ereignis für einzelne Wikipedia-Seiten ermittelt werden.
-- Der Einsatz von Esper im Analysis Tier, war für die erste Lösung die richtige Wahl. Wie sich jedoch gezeigt hat, konnten wir damit
+- Der Einsatz von Esper im Analysis-Tier, war für die erste Lösung die richtige Wahl. Wie sich jedoch gezeigt hat, konnten wir damit
 nicht die gewünschten Ergebnisse erzielten. Die zweite Lösung war jedoch in Esper nicht in vollem gewünschten Umfang umsetzbar.
 Das Ziel, die Analyse von relevanten Ereignissen in Echtzeit umzusetzen, mussten wir auf die Betrachtung der 100 neuesten Events beschränken.
 Denn Esper ermöglicht keinen Zugriff auf vergangene Events, wie es beispielsweise in Apache Flink, FlinkCEP mit (TODO: wie heißt das Teil?) möglich ist.
@@ -14,9 +14,9 @@ Vielleicht geht es auch, wenn man ein Batch-Window mit der Länge von 1 Woche an
 - Die Lösung 2 aus Kapitel \ref{section:prototyp} wurde nur auf deutschsprachige Wikipedia-Seiten und einen Zeitraum von 2 Tagen, in denen Wikipedia-Events gesammelt wurden, angewandt.
 Das hatte den Vorteil, dass die Menge an Events und auch die zu erwartenden Ergebnisse überschaubar blieben und eine Validierung praktikabler machte.
 Es bleibt somit offen, die Anwendbarkeit auf einen größeren Zeitraum und eine größere Menge an Events auszudehnen und die Testresultate zu validieren.
-- Desweiteren könnten auf Basis der gewonnen Erkenntnissen im Analysis Tier -- die Ebenen der Burst-Detection -- weitere Analysen durchgeführt werden.
-Zum Einen ist es eine Möglichkeit, für jede URI die Ebenen wieder zurück in ein Kafka-Topic zu senden und diese damit anderen Analysis Tier-Anwendungen zur Verarbeitung bereitzustellen.
-Zum Anderen könnten die Ebenen über den Data Access Tier von außen aufrufbar gemacht werden. Ein konkretes Szenario hierfür ist eine Webseite
+- Desweiteren könnten auf Basis der gewonnen Erkenntnissen im Analysis-Tier -- die Ebenen der Burst-Detection -- weitere Analysen durchgeführt werden.
+Zum Einen ist es eine Möglichkeit, für jede URI die Ebenen wieder zurück in ein Kafka-Topic zu senden und diese damit anderen Analysis-Tier-Anwendungen zur Verarbeitung bereitzustellen.
+Zum Anderen könnten die Ebenen über den Data-Access-Tier von außen aufrufbar gemacht werden. Ein konkretes Szenario hierfür ist eine Webseite
 die für einzelne Wikipedia-Webseiten -- auf Basis der Ebenen -- eine Timeline mit den relevantesten Ereignissen darstellen kann.
 
 \section{Beiträge der Autoren}
