@@ -9,14 +9,10 @@ Eine Untersuchung der Aktivitäten der Nutzer über definierte Zeiträume hinweg
 
 Für eine Analyse in Echtzeit wird die Folge von Nutzer-Aktivitäten als Stream abgebildet und die Aktivitäten als Events. Wikipedia bietet eine entsprechende Schnittstelle an, den Edit-Events-Stream. Um inhaltliche oder logische Zusammenhänge der Aktivitäten zu erkennen wird im Event-Stream nach Mustern gesucht. Dazu werden in einer Event-Driven-Architecture Operationen auf den Event-Stream angewendet, die unter anderem die Events filtern, aggregieren und gruppieren. Die gewonnenen Zusammenhänge können als Events in den Stream zur weiteren Verarbeitung eingefügt werden, sie können selbst zum Erkennen eines Musters herangezogen werden. Eine stufenweise Verdichtung der Information, mit jeder weiteren Erkennung von Mustern, ist die Folge. Das Resultat sind Zusammenhänge die denen eines Use Case entsprechen.
 
-TODO
-    \begin{itemize}
-        % \item Für eine Entität (z.\,B. eine Person des öffentlichen Lebens) aus der Gesamtheit der Wikipedia-Edit-Events in "Echtzeit" Events der realen Welt ableiten.
-        \item Wir betrachten nur die Metadaten (Zeitstempel, Autor, ...) und nicht den Inhalt der Änderung Änderung (z.\,B. textuelle Änderung).
-        \item ...
-    \end{itemize}
-    Wie sieht so ein Burst of Wikipedia-Edits aus \ref{fig:donald_rumsfelds_resignation_burst}?
-
+Wie sich ein Ereignis der realen Welt auf die Anzahl der Änderungen eines Wikipedia-Artikels auswirkt, zeigt Abbildung \ref{fig:donald_rumsfelds_resignation_burst}.
+Der Rücktritt von Donald Rumsfeld -- der von 2001 bis 2006 Verteidigungsminister der Vereinigten Staaten war -- führte am Tag des Rücktritts
+zu über 700 Änderungen an dessen Wikipedia-Artikel\footnote{https://de.wikipedia.org/wiki/Donald\_Rumsfeld}. Wie in Abbildung \ref{fig:donald_rumsfelds_resignation_burst}
+zu sehen ist, liegt dieser Wert weit über der sonstigen Anzahl von Änderungen. Es handelt sich um eine Anomalie, einen Burst.
 
 \begin{figure}[h]
     \includegraphics[width=.5\textwidth]{images/Extracting_EventRelated_Information_from_Article.jpg}
