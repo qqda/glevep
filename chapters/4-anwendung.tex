@@ -1,6 +1,6 @@
 %!TEX root = ./../main.tex
 \section{Prototyp}\label{section:prototyp}
-Zur Lösung der Aufgabenstellung haben wir einen lauffähigen Prototypen entwickelt, der die Machbarkeit der Analyse demonstriert.
+Zur Lösung der Aufgabenstellung haben wir einen lauffähigen Prototyp entwickelt, der die Machbarkeit der Analyse demonstriert.
 Dafür haben wir die im vorhergehenden Kapitel genannten Technologien eingesetzt. Die Details zu den jeweils entstandenen
 Anwendungen stellen wir in diesem Kapitel vor.
 
@@ -19,7 +19,7 @@ Abbildung \ref{fig:architektur_uebersicht} zeigt die Teilsysteme und deren Inter
 Wie zuvor beschrieben, stützt sich unser System auf Daten von Wikipedia. Wir nutzen den Recent-Changes-Stream, der
 Events zu neu erstellten, aktualisierten und gelöschten Wikipedia-Seiten enthält \cite{WikimediaManual}.
 Der Quellcode \ref{WikipediaRecentChangeJSON} zeigt einen Ausschnitt eines solchen Events.
-Es sind nur die Attribut abgebildet, die in einem der nachfolgenden Teilsysteme relevant sind.
+Es sind nur die Attribute abgebildet, die in einem der nachfolgenden Teilsysteme relevant sind.
 
 \begin{lstlisting}[label=WikipediaRecentChangeJSON,caption=Wikipedia Recent-Change-Event,language=json,firstnumber=1,captionpos=b]
 {
@@ -114,7 +114,7 @@ Ein relevantes Event besteht für uns aus einer definierten \textit{Anzahl an Be
 definierten \textit{Zeitraum} eine definierte \textit{Menge an Bearbeitungen} an einer Wikipedia-Seite vornehmen.
 Zur weiteren Konkretisierung zeigt Quellcode \ref{Solution1_EPL1} das erste EPL-Statement. Hierbei werden
 5 aufeinanderfolgende \code{WikipediaEditEvent}, die kein Bot sind, von unterschiedlichen Benutzern stammen
-und die gleiche URI aus der deutschsprachigen Wikipedia haben, gesucht. Desweiteren wird mit der \code{checkWithin}-Methode
+und die gleiche URI aus der deutschsprachigen Wikipedia haben, gesucht. Des Weiteren wird mit der \code{checkWithin}-Methode
 geprüft, ob die Events \code{w2} bis \code{w5} jeweils den definierten Zeitabstand von 600 Sekunden nicht überschreiten.
 In Esper werden diese Methoden Single-Row-Functions genannt und müssen in der \code{Configuration} angegeben werden.
 Es handelt sich dabei um eine einfache Java-Methode, die einen \code{Boolean} als Rückgabetyp hat.

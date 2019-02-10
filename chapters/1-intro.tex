@@ -1,6 +1,6 @@
 %!TEX root = ./../main.tex
 \section{Einleitung}\label{sec:Einleitung}
-Wikipedia ist eine freie Online-Enzyklopädie, mit dem Ziel „eine frei lizenzierte und hochwertige Enzyklopädie zu schaffen und damit lexikalisches Wissen zu verbreiten“ \cite{wales.}. Sie umfasst 74 Millionen Artikel, die von einer Community von 137.571 Nutzern erstellt und geprüft wurden. Seit 2001 wurden Artikel 877.073.914 mal editiert, dies entspricht etwa 4.000.000 Edits pro Monat. \cite{wikistat}\\
+Wikipedia ist eine freie Online-Enzyklopädie, mit dem Ziel „eine frei lizenzierte und hochwertige Enzyklopädie zu schaffen und damit lexikalisches Wissen zu verbreiten“ \cite{wales.}. Sie umfasst 74 Millionen Artikel, die von einer Community von 137.571 Nutzern erstellt und geprüft wurden. Seit 2001 wurden Artikel 877.073.914-mal editiert, dies entspricht etwa 4.000.000 Edits pro Monat. \cite{wikistat}\\
 
 Aufgrund des kollaborativen Erstellungsprozesses können die Nutzer autonom und dynamisch Artikel ändern und erstellen \cite{wikipedia.}.
 Die Gründe, weswegen die Nutzer aktiv werden, variieren, einer davon ist die Dokumentation globaler Vorfälle. Dies können politische Veränderungen, Naturkatastrophen, sportliche Ereignisse oder Entwicklungen in der Vita prominenter Personen sein. Eine wichtige Eigenschaft dieser Vorfälle, ist eine hohe Relevanz für einen großen Nutzerkreis. Das führt zu vielen Aktivitäten, sogenannten Edits. Interessant ist dabei auch welche Untermenge sich aus den aktiven Nutzern dafür bildet. Offensichtliche gemeinsame Eigenschaften dieser Nutzermengen sind geographische Verortung, Sprache, Kompetenzen und Interessen. \cite{10.1007978-3-642-36973-5_22}\\
@@ -10,7 +10,7 @@ Eine Untersuchung der Aktivitäten der Nutzer über definierte Zeiträume hinweg
 Für eine Analyse in Echtzeit wird die Folge von Nutzer-Aktivitäten als Stream abgebildet und die Aktivitäten als Events. Wikipedia bietet eine entsprechende Schnittstelle an, den Edit-Events-Stream. Um inhaltliche oder logische Zusammenhänge der Aktivitäten zu erkennen wird im Event-Stream nach Mustern gesucht. Dazu werden in einer Event-Driven-Architecture Operationen auf den Event-Stream angewendet, die unter anderem die Events filtern, aggregieren und gruppieren. Die gewonnenen Zusammenhänge können als Events in den Stream zur weiteren Verarbeitung eingefügt werden, sie können selbst zum Erkennen eines Musters herangezogen werden. Eine stufenweise Verdichtung der Information, mit jeder weiteren Erkennung von Mustern, ist die Folge. Das Resultat sind Zusammenhänge die denen eines Use Case entsprechen.
 
 Wie sich ein Ereignis der realen Welt auf die Anzahl der Änderungen eines Wikipedia-Artikels auswirkt, zeigt Abbildung \ref{fig:donald_rumsfelds_resignation_burst}.
-Der Rücktritt von Donald Rumsfeld -- der von 2001 bis 2006 Verteidigungsminister der Vereinigten Staaten war -- führte am Tag des Rücktritts
+Der Rücktritt von Donald Rumsfeld, der von 2001 bis 2006 Verteidigungsminister der Vereinigten Staaten war, führte am Tag des Rücktritts
 zu über 700 Änderungen an dessen Wikipedia-Artikel\footnote{https://de.wikipedia.org/wiki/Donald\_Rumsfeld}. Wie in Abbildung \ref{fig:donald_rumsfelds_resignation_burst}
 zu sehen ist, liegt dieser Wert weit über der sonstigen Anzahl von Änderungen. Es handelt sich um eine Anomalie, einen Burst.
 
