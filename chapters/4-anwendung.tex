@@ -17,7 +17,7 @@ Abbildung \ref{fig:architektur_uebersicht} zeigt die Teilsysteme und deren Inter
 
 \subsection{Collection-Tier: Wikipedia}
 Wie zuvor beschrieben, stützt sich unser System auf Daten von Wikipedia. Wir nutzen den Recent-Changes-Stream, der
-Events zu neu erstellten, aktualisierten und gelöschten Wikipedia-Seiten enthält\footnote{https://www.mediawiki.org/wiki/Manual:RCFeed}.
+Events zu neu erstellten, aktualisierten und gelöschten Wikipedia-Seiten enthält \cite{WikimediaManual}.
 Der Quellcode \ref{WikipediaRecentChangeJSON} zeigt einen Ausschnitt eines solchen Events.
 Es sind nur die Attribut abgebildet, die in einem der nachfolgenden Teilsysteme relevant sind.
 
@@ -39,14 +39,14 @@ Es sind nur die Attribut abgebildet, die in einem der nachfolgenden Teilsysteme 
 \end{lstlisting}
 
 Die beiden Parameter \code{offset} und \code{uri}, innerhalb des \code{meta}-Objektes, stammen aus einem Kafka-System
-und dienen der Wiederaufnahme eines abgebrochenen Streams. Wikipedia setzt intern Apache Kafka als Messaging-System ein.
+und dienen der Wiederaufnahme eines abgebrochenen Streams \cite{WikimediaManual}. Wikipedia setzt intern Apache Kafka als Messaging-System ein.
 Nach außen nutzt Wikipedia EventStreams. Das ist ein Webservice der kontinuierliche Datenströme mit strukturierten Daten
 über HTTP sendet\footnote{https://wikitech.wikimedia.org/wiki/EventStreams}. Die Basis-Technologie dessen, ist
 das Server-Sent Event (SSE) Protokoll. Der Recent-Changes-Stream ist ein solcher Stream und kann über eine Client-Bibliothek
 konsumiert werden.
 
 Wie im vorherigen Kapitel beschrieben, werden Daten vom Collection-Tier mithilfe eines der aufgelisteten Pattern übertragen.
-SSE funktioniert nach dem One-way pattern, indem eine HTTP-Verbindung aufgemacht wird um Nachrichten zu empfangen \cite{EventSource_SSE}.
+SSE funktioniert nach dem One-Way-Pattern, indem eine HTTP-Verbindung erzeugt wird um Nachrichten zu empfangen \cite{EventSource_SSE}.
 
 \subsection{Implementierungsdetails zum Messaging-Queuing-Tier: Kafka}
 Im Messaging-Queuing-Tier setzen wir Apache Kafka in der Version 2.1 ein, um die im Collection-Tier beschriebenen Wikipedia-Events
@@ -58,12 +58,12 @@ Schritte nacheinander ausgeführt werden:
     jeweils den \code{StringSerializer} von Kafka ein. Das heißt, die Events werden als JSON-String in das Topic \code{wikiEdit}
     eingespeist. Zum Senden von Events erzeugen wir ein Producer-Objekt mit dem passenden Typ \code{Producer<String, String>}.
     An dieser Stelle war die Überlegung, anstelle eines String-Serialisierers für den Wert des Producers,
-    einen eigenen Serialisierer für die WikipediaEditEvent-Klasse einzusetzen. Wir entschieden uns aber für den
+    einen eigenen Serialisierer für die \code{WikipediaEditEvent}-Klasse einzusetzen -- Details hierzu in Abbildung \ref{fig:class_diagram_eventtypes}. Wir entschieden uns aber für den
     String-Serialisierer, da Wikipedia die Events auch als JSON-String überträgt und wir in Kafka selbst
     keine weiteren Operationen an den Daten vornehmen. Eine mögliche Operation könnte ein Filter sein.
-    Aber das einzige Ziel von Kafka soll die Persistierung und Weitergabe von Daten sein und dafür ist keine Serialisierung in
-    einem bestimmten Typen notwendig. Außerdem verschiebt es Komplexität aus der Kafka-Anwendung
-    in die Consumer-Anwendungen.
+    Aber das einzige Ziel von Kafka soll die Persistierung und Weitergabe von Daten sein. Dafür ist keine De-/Serialisierung in
+    einem bestimmten Typen notwendig. Ein weiterer Grund ist die Verschiebung der Komplexität aus der Kafka-Anwendung
+    in die Consumer-Anwendungen. Dadurch bleibt die Kafka-Anwendung so leichtgewichtig wie möglich.
     \item \textit{Erzeugung eines EventHandlers.} Für das Empfangen von EventSource-Nachrichten nutzen wir die Java-Bibliothek
     \textit{okhttp-eventsource}\footnote{https://github.com/launchdarkly/okhttp-eventsource}. Zur Verarbeitung der Events
     \code{onOpen}, \code{onClose}, \code{onMessage}, \code{onComment} und \code{onError} muss das Interface \code{EventHandler} von
@@ -80,9 +80,9 @@ Schritte nacheinander ausgeführt werden:
 \end{enumerate}
 
 Die Konfiguration der Kafka-Topics ist sehr einfach gehalten, da es sich bei der Anwendung nur um einen Prototypen handelt.
-Wir haben ein Topic mit dem Namen \code{wikiEdit}. Da die Anwendung auf nur einem Server läuft, setzen wir auch nur
-eine Partition ein und haben keine Replikation. Eine Skalierung der Kafka-Anwendung auf mehrere
-parallel-arbeitende Server ist jedoch nicht ausgeschlossen für eine Produktivanwendung.
+Wir nutzen nur ein Topic mit dem Namen \code{wikiEdit}. Da die Anwendung auf nur einem Server läuft, setzen wir auch nur
+eine Partition ein und haben keine Replikation. Durch die Eigenschaften von Kafka steht einer Skalierung der Kafka-Anwendung
+auf mehrere parallel-arbeitende Server nichts im Weg.
 
 \subsection{Implementierungsdetails zum Analysis-Tier: Esper}
 In unserer Esper-Anwendung, die das Hauptsystem des Analysis-Tier ist, nutzen wir Esper in Version 7.1
