@@ -119,7 +119,7 @@ geprüft, ob die Events \code{w2} bis \code{w5} jeweils den definierten Zeitabst
 In Esper werden diese Methoden Single-Row-Functions genannt und müssen in der \code{Configuration} angegeben werden.
 Es handelt sich dabei um eine einfache Java-Methode, die einen \code{Boolean} als Rückgabetyp hat.
 
-\begin{lstlisting}[label=Solution1_EPL1,caption=Lösung 1: EPL-Statement 1,language=epl,firstnumber=1,captionpos=b]
+\begin{lstlisting}[label=Solution1_EPL1,caption=Lösung 1: EPL-Statement,language=epl,firstnumber=1,captionpos=b]
 insert into WikipediaEditEventFive
 select w1, w2, w3, w4, w5
 from pattern[
@@ -163,7 +163,7 @@ Das ermöglicht es uns Anomalien -- ein starker Anstieg der Anzahl der Aktualisi
 Der Quellcode \ref{Solution2_EPL1} zeigt das EPL-Statement hierzu. Es wird eine URI-Partitionierung mithilfe eines
 Kontexts vorgenommen. Damit wird das Muster zur Aggregation der 100 Events je URI, mit einem Batch-Window, umgesetzt.
 
-\begin{lstlisting}[label=Solution2_EPL1,caption=Lösung 2: EPL-Statement 2,language=epl,firstnumber=1,captionpos=b]
+\begin{lstlisting}[label=Solution2_EPL1,caption=Lösung 2: EPL-Statement,language=epl,firstnumber=1,captionpos=b]
 create context GroupByUri partition by meta.uri from WikipediaEditEvent
 
 context GroupByUri
@@ -179,7 +179,7 @@ Anomalie bzw. der Burst. Für uns hat sich gezeigt, dass Events ab der Ebene 2 e
 Betrachtet man die 100 Events der Wikipedia-Seite der \textit{Handball-Weltmeisterschaft der Männer 2019}\footnote{https://de.wikipedia.org/wiki/Handball-Weltmeisterschaft\newline{}\_der\_M\%C3\%A4nner\_2019}
 in dem Zeitraum vom 25. Juni 2018 12:44 Uhr bis zum 12. Januar 2019 17:06 Uhr, ergibt sich folgende Ausgabe des Burstdetection-Service:
 
-\begin{lstlisting}[label=Solution2_Layers,caption=Ebene 0\, 1 und 2 der Burst-Detectionen,language=epl,firstnumber=1,captionpos=b]
+\begin{lstlisting}[label=Solution2_Layers,caption={Ebene 0, 1 und 2 der Burst-Detection},language=epl,firstnumber=1,captionpos=b]
 [[0, 1529923440000, 1547309160000], [1.0, 1546853700000, 1547309160000], [2.0, 1547136540000, 1547243280000]]
 \end{lstlisting}
 
