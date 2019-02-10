@@ -1,14 +1,14 @@
 %!TEX root = ./../main.tex
 \section{Prototyp}\label{section:prototyp}
-Zur Lösung der Aufgabenstellung haben wir einen lauffähigen Prototypen entwickelt, der die Machbarkeit demonstriert.
+Zur Lösung der Aufgabenstellung haben wir einen lauffähigen Prototypen entwickelt, der die Machbarkeit der Analyse demonstriert.
 Dafür haben wir die im vorhergehenden Kapitel genannten Technologien eingesetzt. Die Details zu den jeweils entstandenen
 Anwendungen stellen wir in diesem Kapitel vor.
 
-\begin{figure*}
-    \includegraphics[width=\textwidth]{images/Architektur_Uebersicht.png}
+\begin{figure}[h]
+    \includegraphics[width=.5\textwidth]{images/Architektur_Uebersicht.png}
     \caption{Architekturübersicht}
     \label{fig:architektur_uebersicht}
-\end{figure*}
+\end{figure}
 
 Abbildung \ref{fig:architektur_uebersicht} zeigt die Teilsysteme und deren Interaktion untereinander.
 
@@ -21,7 +21,7 @@ Events zu neu erstellten, aktualisierten und gelöschten Wikipedia-Seiten enthä
 Der Quellcode \ref{WikipediaRecentChangeJSON} zeigt einen Ausschnitt eines solchen Events.
 Es sind nur die Attribut abgebildet, die in einem der nachfolgenden Teilsysteme relevant sind.
 
-\begin{lstlisting}[label=WikipediaRecentChangeJSON,caption=Wikipedia RecentChange-Event,language=json,firstnumber=1,captionpos=b]
+\begin{lstlisting}[label=WikipediaRecentChangeJSON,caption=Wikipedia Recent-Change-Event,language=json,firstnumber=1,captionpos=b]
 {
     "bot": false,
     "comment": "/* Politischer Werdegang */",

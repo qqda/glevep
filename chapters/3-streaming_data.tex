@@ -22,11 +22,13 @@ Protokoll, werden die Daten mithilfe eines dieser Patterns übertragen \cite{psa
 Bei der Datenquelle kann es sich sowohl um von Hardware und auch von Software generierte Events handeln. Beispiele hierfür sind
 Temperatur, Lautstärke oder auch Browser-Clicks.
 
-\begin{figure}[h]
-    \includegraphics[width=.5\textwidth]{images/streaming_data_architecture-psaltis.jpg}
+
+\begin{figure*}
+    \includegraphics[width=\textwidth]{images/streaming_data_architecture-psaltis.jpg}
     \caption{Streaming-Data-Architektur \cite{psaltis2017streaming}}
     \label{fig:streaming_data_architecture-psaltis}
-\end{figure}
+\end{figure*}
+
 
 Um die Daten vom Collection-Tier auf den Rest der Pipeline zu verteilen wird ein Messaging Queuing Tier implementiert.
 Das Message-Queuing-Model ist ein Modell zur Interprozesskommunikation. Anwendungen schicken

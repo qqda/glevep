@@ -22,17 +22,17 @@ Wavelet-based Signals (EDCoW)\\Der Stream wird in Batches aufgeteilt, die dann p
 \subsection{Burst Detection}
 Da sich die Erkennung globaler Events mittels Esper als zumindest unvollständig erwies, wurden Methoden untersucht die das Verfahren  Ergänzen oder Ersetzen können.\\
 
+\begin{figure*}[ht]
+    \centerline{\includegraphics[height=4.4cm]{images/ratiopyramid.png}}
+    \caption{Von der klassischen 'Aggregataion Pyramid' zur 'Ratio Aggreation Pyramid' \cite{yuan2007online}}
+    \label{fig:ratiopyramid}
+\end{figure*}
+
+
 Globale Events haben unter anderem auch die Eigenschaft eine erhöhte Aktivität im Edit-Event-Stream zu verursachen. Erhöhte Aktivität (Bursts) ist ein Phänomen das bereits seit Jahrzehnten untersucht wird, daher existieren eine Reihe von Theorien und abgeleiteten Algorithmen. Die zeitnahe Erstellung von Ergebnissen ist wichtig, weswegen auf eine schnelle Verarbeitung hin optimiert wird. Bursts besitzen eine Reihe an Attributen, die abhängig vom Use Case definiert werden. Dazu zählt der Zeitraum der jeweils auf das Auftreten eines Bursts untersucht wird, die Intensität und die Verteilung der Intensität auf dem betrachteten Zeitraum.\\
 
 Generell kann ein Datenstrom auf zwei Arten betrachtet werden. Beim Point Monitoring wird nur das aktuelle Ereignis betrachtet. Liegt der Wert eines Attributs des Events in einem vordefinierten Bereich oder überschreitet es einen Grenzwert, wird ein Burst erkannt. Beim Aggregate Monitoring werden über einen Zeitraum (Windows) hinweg Ereignisse aggregiert. Drei Zeitfenstertypen werden unterschieden. Beim Landmark Window wird der Zeitraum durch einmalig festgelegte Zeitpunkte definiert.
 Das Sliding Window hingegen bewegt sich durch die Zeit, mit festgelegter Größe und festgelegtem Intervall. Die Parameter können als Zeitangaben oder als Zählangaben erfolgen. Ein Window wird entweder nach einer gewissen Zeit neu erstellt oder nach einer bestimmten Anzahl an Ereignissen. Beim Damped Window werden zudem jedem Ereignis Gewichtungen erteilt. Je länger ein Ereignis zurückliegt, desto weniger Gewicht bekommt es mit Fortschreiten der Zeit. \cite{Zhu:2003:EEB:956750.956789}\\
-
-\begin{figure*}[htbp]
-\centerline{\includegraphics[height=4.4cm]{images/ratiopyramid.png}}
-\caption{Von der klassischen 'Aggregataion Pyramid' zur 'Ratio Aggreation Pyramid' \cite{yuan2007online}}
-\label{fig:ratiopyramid}
-\end{figure*}
-
 
 \begin{figure}[h]
     \includegraphics[width=.5\textwidth]{images/wavelet.jpg}
@@ -42,7 +42,7 @@ Das Sliding Window hingegen bewegt sich durch die Zeit, mit festgelegter Größe
 
 Ein spezielles Modell entwickeln Zhu et al. in 'Efficient Elastic Burst Detection in Data Streams' \cite{Zhu:2003:EEB:956750.956789} mit dem Elastic Window, bei dem   die Größe der Zeitfenster variiert. Somit können die Bursts dynamischer durch deren Charakteristik und unabhängiger von ihrer Dauer erkannt werden, die oftmals nicht im Vorfeld festgelegt werden kann. Dafür wird ein Wavelet-Tree vom Stream erzeugt, bei dem die Wavelet-Koeffizienten den Aggregaten der Fenster entsprechen. Wie in Abbildung \ref{fig:wavelet} zu sehen ist, wird zu Beginn der Stream in Fenster unterteilt, die disjunkt nebeneinander liegen. Je Fenster wird ein Aggregat erstellt - in der Regel werden dazu die Ereignisse eines bestimmten Typs oder Ereignisse mit gleichen Attributen gezählt. Diese Aggregate bilden nun selbst einen Stream. Das Verfahren wird wiederholt, vorausgesetzt es befinden sich entsprechende Ereignisse bzw. aggregierte Ereignisse im Stream. Mit jedem Schritt wird der betrachtete Zeitabschnitt größer und man bewegt sich in das nächst höhere Level Richtung Wurzel des Baums. Zu jedem Level wird ein Schwellwert angegeben, bei dessen Überscheitung ein Burst ausgelöst wird.\\
 
-\begin{figure*}[htbp]
+\begin{figure*}[h]
 \centerline{\includegraphics[height=6.3cm]{images/slopepyramid.jpg}}
 \caption{Berechnungsbeispiel zur 'Slope Pyramid' \cite{yuan2007online}}
 \label{fig:slopepyramid}
