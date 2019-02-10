@@ -52,7 +52,7 @@ SSE funktioniert nach dem One-Way-Pattern, indem eine HTTP-Verbindung erzeugt wi
 Im Messaging-Queuing-Tier setzen wir Apache Kafka in der Version 2.1 ein, um die im Collection-Tier beschriebenen Wikipedia-Events
 in unser eigenes Messaging-System zu überführen. Hierfür haben wir eine Java-Anwendung entwickelt, in der die folgenden
 Schritte nacheinander ausgeführt werden:
-\begin{enumerate}
+\begin{enumerate}[i.]
     \item \textit{Kafka Initialisierung.} Den Host des Bootstrap-Servers setzen um eine Verbindung zu erzeugen.
     Als Key- und Value-Serialisierer setzen wir
     jeweils den \code{StringSerializer} von Kafka ein. Das heißt, die Events werden als JSON-String in das Topic \code{wikiEdit}
@@ -93,31 +93,31 @@ Lösungen. Danach beschreiben wir die Details und Unterschiede der jeweiligen L�
 Zielerfüllung.
 In unserer Esper-Anwendung sind wir im Allgemeinen wie folgt vorgegangen:
 
-\begin{enumerate}
+\begin{enumerate}[i.]
     \item \textit{Esper Initialisierung.} Die Initialisierung von Esper besteht aus der Erzeugung einer \code{Configuration},
     der Erstellung und dem Starten von EPL-Statements, sowie dem Erzeugen von Listener-Klassen.
-    \item \textit{Kafka initialisieren und starten.} Um die Daten aus dem Messaging-Queuing-Tier zu bekommen haben wir einen
+    \item \textit{Kafka initialisieren und starten.} Um die Daten aus dem Messaging-Queuing-Tier zu bekommen, haben wir einen
     \code{KafkaConsumer<String, String>} implementiert.
     Wir pollen in einer Endlosschleife alle 10 Millisekunden die Daten vom Kafka-Topic \code{wikiEdit}. Bei den empfangenen Daten
-    handelt es sich um einen String, der JSON enthält. Mithilfe der Gson-Bibliothek\footnote{https://github.com/google/gson}
+    handelt es sich um einen String, der ein JSON-Objekt enthält. Mithilfe der Gson-Bibliothek\footnote{https://github.com/google/gson}
     konvertieren wir die JSON-Strings in Java-Objekte. Die daraus resultierenden Java-Objekte senden wir wiederum in das
     Esper-System, damit darauf die EPL-Statements angewandt werden können.
     \item \textit{Aktion ausführen, sobald das Muster erfüllt ist.} Ist das Muster erfüllt, wird die \code{update}-Methode der Listener-Klasse
-    aufgerufen. Es werden die alten und neuen Events übergeben. Daraus kann eine Aktion erfolgen, z.\,B. dass erzeugen eines neuen
+    aufgerufen. Es werden die alten und neuen Events übergeben. Daraus kann eine Aktion erfolgen, z.\,B. das Erzeugen eines neuen
     komplexen Events.
 \end{enumerate}
 
 
 \subsubsection{Lösung 1}
-In unserer ersten Lösung war es unser Ziel, relevante Events durch die Modellierung geeigneter Ereignistypen zu detektieren.
+In unserer ersten Lösung ist es unsere Herangehensweise, relevante Events durch die Modellierung geeigneter Ereignistypen zu detektieren.
 Ein relevantes Event besteht für uns aus einer definierten \textit{Anzahl an Benutzer} die in einem
 definierten \textit{Zeitraum} eine definierte \textit{Menge an Bearbeitungen} an einer Wikipedia-Seite vornehmen.
 Zur weiteren Konkretisierung zeigt Quellcode \ref{Solution1_EPL1} das erste EPL-Statement. Hierbei werden
 5 aufeinanderfolgende \code{WikipediaEditEvent}, die kein Bot sind, von unterschiedlichen Benutzern stammen
-und die gleiche URI aus der deutschsprachigen Wikipedia haben. Desweiteren wird mit der \code{checkWithin}-Methode
+und die gleiche URI aus der deutschsprachigen Wikipedia haben, gesucht. Desweiteren wird mit der \code{checkWithin}-Methode
 geprüft, ob die Events \code{w2} bis \code{w5} jeweils den definierten Zeitabstand von 600 Sekunden nicht überschreiten.
-In Esper werden diese Methoden Single-Row-Functions genannt. Diese müssen in der \code{Configuration} angegeben werden
-und es handelt sich dabei um eine einfache Java-Methode, die einen \code{Boolean} als Rückgabetyp hat.
+In Esper werden diese Methoden Single-Row-Functions genannt und müssen in der \code{Configuration} angegeben werden.
+Es handelt sich dabei um eine einfache Java-Methode, die einen \code{Boolean} als Rückgabetyp hat.
 
 \begin{lstlisting}[label=Solution1_EPL1,caption=Lösung 1: EPL-Statement 1,language=epl,firstnumber=1,captionpos=b]
 insert into WikipediaEditEventFive
@@ -141,27 +141,27 @@ eingefügt. Bei der Erzeugung werden dem Konstruktor die selektierten Objekte \c
     \label{fig:class_diagram_eventtypes}
 \end{figure}
 
-Das zweite EPL-Statement ist von der Funktionsweise her analog zum ersten. Das Muster besteht jedoch nicht aus
+Das zweite EPL-Statement ist von der Funktionsweise her analog zum Ersten. Das Muster besteht jedoch nicht aus
 5 aufeinanderfolgenden \code{WikipediaEditEvent}, sondern aus
 4 aufeinanderfolgenden \code{WikipediaEditEventFive} die in einem Zeitraum von 20 Minuten aufgetreten sind.
 
 Die beiden Zahlen, 4 und 5 sind durch Ausprobieren ermittelt worden. Das zeigt sehr deutlich, dass das weder eine
-effiziente noch eine sehr erfolgreiche Lösung für unsere Aufgabe ist.
-Das Problem liegt an den sehr unterschiedlichen Menge an Bearbeitungen.
+effiziente noch eine sehr erfolgversprechende Lösung für unsere Aufgabenstellung ist.
+Das Problem liegt an den sehr unterschiedlichen Mengen an Änderungen von Wikipedia-Seiten.
 Denn es gibt Wikipedia-Seiten, die dauerhaft einer großen Menge an Aktualisierungen unterworfen sind und wiederum andere Wikipedia-Seiten, die
 nur sehr sporadisch aktualisiert werden. Aus diesen Gründen ist es uns mit dieser Herangehensweise
 nicht gelungen eine Vereinheitlichung, für relevante Events, über alle Wikipedia-Seiten hinweg zu finden.
 
 \subsubsection{Lösung 2}
 Die Probleme der Lösung 1 führten dazu, dass wir einen Ansatz verfolgten, bei dem die Betrachtung einzelner Seiten mehr im Fokus steht.
-In Lösung 2 sind wir ein Stück weg vom Website Activity Tracking, hin zur Anomalieerkennung gegangen. Das zeigt sich auch in der
+In Lösung 2 sind wir ein Stück weg von Website-Activity-Tracking, hin zur Anomalieerkennung gegangen. Das zeigt sich auch in der
 Architektur aus Abbildung \ref{fig:architektur_uebersicht}, in der neben der Esper-Anwendung auch ein Aufruf eines
 Burst-Detection-Algorithmus abgebildet ist.
 
-Konkret sieht die Implementierung so aus, dass wir 100 Events einer URI aggregieren und darauf wenden wir den Burst-Detection-Algorithmus an.
+Konkret sieht die Implementierung so aus, dass wir 100 Events einer URI aggregieren und darauf einen Burst-Detection-Algorithmus anwenden.
 Das ermöglicht es uns Anomalien -- ein starker Anstieg der Anzahl der Aktualisierungen -- einzelner URIs zu betrachten.
 Der Quellcode \ref{Solution2_EPL1} zeigt das EPL-Statement hierzu. Es wird eine URI-Partitionierung mithilfe eines
-Kontexts erstellt. Damit wird das Muster zur Aggregation der 100 Events je URI, mit einem Batch-Window, umgesetzt.
+Kontexts vorgenommen. Damit wird das Muster zur Aggregation der 100 Events je URI, mit einem Batch-Window, umgesetzt.
 
 \begin{lstlisting}[label=Solution2_EPL1,caption=Lösung 2: EPL-Statement 2,language=epl,firstnumber=1,captionpos=b]
 create context GroupByUri partition by meta.uri from WikipediaEditEvent
@@ -172,12 +172,12 @@ from WikipediaEditEvent(bot=false , wiki='dewiki').win:length_batch(100)
 \end{lstlisting}
 
 Wird das Muster erkannt, werden die Timestamps der 100 selektierten Events an die REST-Schnittstelle des BurstDetection-Service gesendet.
-Dieser wendet einen Burst-Detection-Algorithmus auf die Daten an und gibt ein Array mit \textquotedblleft Ebenen\textquotedblright zurück.
+Dieser wendet einen Burst-Detection-Algorithmus auf die Daten an und gibt ein Array mit \textquotedblleft{}Ebenen\textquotedblright{} zurück.
 Die Ebene 0 entspricht hierbei dem gesamten Datensatz von 100 Events. Je höher die Ebene, desto stärker und klarer abgegrenzt ist die
-Anomalie bzw. der Burst. Für uns hat sich gezeigt, dass Events aber der Ebene 2 einem relevanten Ereignis sehr nahe kommen.
+Anomalie bzw. der Burst. Für uns hat sich gezeigt, dass Events ab der Ebene 2 einem relevanten Ereignis sehr nahe kommen.
 
-Betrachtet man die 100 Events der Wikipedia-Seite der Handball-Weltmeisterschaft der Männer 2019\footnote{https://de.wikipedia.org/wiki/Handball-Weltmeisterschaft\newline{}\_der\_M\%C3\%A4nner\_2019}
-in dem Zeitraum vom 25. Juni 2018 12:44 Uhr bis zum 12. Januar 2019 17:06 Uhr, ergibt sich folgende Ausgabe:
+Betrachtet man die 100 Events der Wikipedia-Seite der \textit{Handball-Weltmeisterschaft der Männer 2019}\footnote{https://de.wikipedia.org/wiki/Handball-Weltmeisterschaft\newline{}\_der\_M\%C3\%A4nner\_2019}
+in dem Zeitraum vom 25. Juni 2018 12:44 Uhr bis zum 12. Januar 2019 17:06 Uhr, ergibt sich folgende Ausgabe des Burstdetection-Service:
 
 \begin{lstlisting}[label=Solution2_Layers,caption=Ebene 0\, 1 und 2 der Burst-Detectionen,language=epl,firstnumber=1,captionpos=b]
 [[0, 1529923440000, 1547309160000], [1.0, 1546853700000, 1547309160000], [2.0, 1547136540000, 1547243280000]]
@@ -188,7 +188,7 @@ Ebene 2 geht vom 10. Januar 2019 17:09 Uhr bis zum 11. Januar 2019 22:48 Uhr. Je
 relevanter wird ein Bereich. Relevant heißt, dass in diesem Bereich mehr Events als sonst aufgetreten sind -- ein Burst.
 Das Beispiel zeigt also, dass wir durch die Lösung 2 für einzelne Wikipedia-Seiten relevante Ereignisse ableiten können.
 
-\subsection{BurstDetection-Implementierung}
-Die Burst-Detection ist in Python geschrieben. Es handelt sich hierbei um ein REST-Interface mit einem Endpunkt,
-der beim Aufruf lediglich als Wrapper für den Aufruf der Burst-Detection fungiert. Die Burst-Detection wird durch ein
+\subsection{Burst-Detection-Implementierung}
+der Burst-Detection-Service ist in Python geschrieben. Es handelt sich hierbei um ein REST-Interface mit einem Endpunkt,
+der beim Aufruf lediglich als Wrapper für den Aufruf des Burst-Detection-Algorithmus fungiert. Die Burst-Detection wird durch ein
 zusätzliches Python-Package eingefügt und ist auch austauschbar.
